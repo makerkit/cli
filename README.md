@@ -26,15 +26,19 @@ Simply replace the examples below with `npx @makerkit/cli` instead of
 Running the CLI without any arguments will display the help:
 
 ```
-> makerkit
+Usage: makerkit [options] [command]
+
+Your SaaS Kit companion. Add plugins, manage migrations, and more.
 
 Options:
   display the version number  output the version number
   -h, --help                  display help for command
 
 Commands:
+  new                         Initialize a new Makerkit project
   plugins                     List and install plugins.
   i18n                        Manage and translate your i18n files
+  license                     Manage Licenses
   help [command]              display help for command
 ```
 
@@ -114,3 +118,17 @@ To verify that your i18n files are in sync, you can use the `i18n verify` comman
 ```
 
 If you omit the `base-locale` argument, the command will use `en` as the base.
+
+## Licenses
+
+The CLI can help you manage your licenses.
+
+### Activating your Makerkit License
+
+To activate your Makerkit license, you can use the `license activate` command:
+
+```
+> makerkit license activate
+```
+
+This command will prompt you to enter your license key and your Github username. Once entered, the command will activate your license.
