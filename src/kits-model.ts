@@ -20,7 +20,7 @@ export const KitsModel = {
     name: `Next.js Supabase Lite`,
     id: `next-supabase-lite`,
     localePath: `public/locales`,
-    repository: `git@github.com:makerkit/next-firebase-saas-kit-lite`,
+    repository: `git@github.com:makerkit/next-supabase-saas-kit-lite`,
     plugins: [],
   },
   RemixFirebase: {

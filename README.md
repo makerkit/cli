@@ -7,21 +7,26 @@ The CLI is a set of commands that help you manage your Makerkit SaaS Starter Kit
 To install the CLI, you can use npm:
 
 ```
-npm install -g makerkit/cli
+npm install -g @makerkit/cli
 ```
+
+You may need to use `sudo` to install the CLI globally.
 
 Alternatively, your can run commands using `npx`:
 
 ```
-npx makerkit/cli <command>
+npx @makerkit/cli <command>
 ```
+
+Simply replace the examples below with `npx @makerkit/cli` instead of 
+`makerkit` to run the commands without installing the CLI globally.
 
 ## Usage
 
 Running the CLI without any arguments will display the help:
 
 ```
-> makerkit-cli
+> makerkit
 
 Options:
   display the version number  output the version number
@@ -33,6 +38,20 @@ Commands:
   help [command]              display help for command
 ```
 
+## Creating a new Makerkit project
+
+To create a new Makerkit project, you can use the `new` command:
+
+```
+> makerkit new
+```
+
+The CLI will prompt you to select a starter kit to use and a name. Once 
+selected, the CLI will create a new project in the current directory by 
+pulling the starter kit from GitHub.
+
+The command will also install the dependencies.
+
 ## Plugins
 
 The CLI can help you manage plugins in your project. You can list the available plugins, install them, and update them.
@@ -42,7 +61,7 @@ The CLI can help you manage plugins in your project. You can list the available 
 To list the available plugins, you can use the `plugins list` command:
 
 ```
-> makerkit-cli plugins list
+> makerkit plugins list
 
 Available plugins:
   - cookie-banner
@@ -53,7 +72,7 @@ Available plugins:
 To install a plugin, you can use the `plugins install` command:
 
 ```
-> makerkit-cli plugins install
+> makerkit plugins install
 ```
 
 This command will prompt you to select a plugin to install. Once selected, the plugin will be installed in your project.
@@ -63,7 +82,7 @@ This command will prompt you to select a plugin to install. Once selected, the p
 To update a plugin, you can use the `plugins update` command:
 
 ```
-> makerkit-cli plugins update
+> makerkit plugins update
 ```
 
 This command will prompt you to select a plugin to update. Once selected, the plugin will be updated in your project.
@@ -79,7 +98,7 @@ in sync between each other.
 To translate your i18n files, you can use the `i18n translate` command:
 
 ```
-> makerkit-cli i18n translate en es
+> makerkit i18n translate en es
 ```
 
 This command will translate all the keys in your `en/*.json` file to `es/*.
@@ -91,7 +110,7 @@ add a valid OpenAI API key in the `.env.local` file of your Makerkit repository.
 To verify that your i18n files are in sync, you can use the `i18n verify` command:
 
 ```
-> makerkit-cli i18n verify <base-locale>
+> makerkit i18n verify <base-locale>
 ```
 
 If you omit the `base-locale` argument, the command will use `en` as the base.

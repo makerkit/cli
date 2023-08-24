@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { i18nCommand } from '@/src/commands/i18n/i18n.command';
+import { newCommand } from '@/src/commands/new/new.command';
 import { pluginsCommand } from '@/src/commands/plugins/plugins.command';
-import { Workspace } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { config } from 'dotenv';
@@ -21,18 +21,12 @@ async function main() {
     )
     .version('-v, --version', 'display the version number');
 
-  const meta = await Workspace.getKitMeta();
+  program
+    .addCommand(newCommand)
+    .addCommand(pluginsCommand)
+    .addCommand(i18nCommand);
 
-  logKitVersion(meta.name, meta.version);
-
-  program.addCommand(pluginsCommand).addCommand(i18nCommand);
   program.parse();
 }
 
 void main();
-
-function logKitVersion(name: string, version: unknown) {
-  console.log(
-    `Makerkit version: ${chalk.cyan(name)} - ${chalk.cyan(version)}.\n`
-  );
-}

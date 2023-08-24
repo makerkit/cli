@@ -1,5 +1,6 @@
 import { join } from 'path';
 import { KitsModel } from '@/src/kits-model';
+import chalk from 'chalk';
 import fs from 'fs-extra';
 
 export class Workspace {
@@ -11,6 +12,16 @@ export class Workspace {
       ...kit,
       version: packageJson.version,
     };
+  }
+
+  static async logWorkspaceInfo() {
+    const meta = await Workspace.getKitMeta();
+
+    console.log(
+      `Makerkit version: ${chalk.cyan(meta.name)} - ${chalk.cyan(
+        meta.version
+      )}.\n`
+    );
   }
 }
 

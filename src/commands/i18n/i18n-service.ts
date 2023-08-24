@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 
 type NestedKey = Record<string, string | Record<string, string>>;
 
-export class TranslateManager {
+export class I18nService {
   /**
    * @name verify
    * @description Verifies if the locale files are in sync

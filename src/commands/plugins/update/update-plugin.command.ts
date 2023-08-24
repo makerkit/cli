@@ -1,4 +1,4 @@
-import { PluginManager } from '@/src/commands/plugins/plugin-manager';
+import { PluginsService } from '@/src/commands/plugins/plugins-service';
 import { Command } from 'commander';
 
 export function createUpdatePluginCommand(parentCommand: Command) {
@@ -7,6 +7,6 @@ export function createUpdatePluginCommand(parentCommand: Command) {
     .argument('[plugin-id]', 'Plugin id')
     .description('Update plugin to the latest version')
     .action(async (maybePluginId) => {
-      await PluginManager.pull(maybePluginId);
+      await PluginsService.pull(maybePluginId);
     });
 }

@@ -1,4 +1,4 @@
-import { PluginManager } from '@/src/commands/plugins/plugin-manager';
+import { PluginsService } from '@/src/commands/plugins/plugins-service';
 import { Command } from 'commander';
 
 export function createInstallPluginCommand(parentCommand: Command) {
@@ -7,6 +7,6 @@ export function createInstallPluginCommand(parentCommand: Command) {
     .argument('[plugin-id]', 'Plugin id')
     .description('Install plugin')
     .action(async (maybePluginId) => {
-      await PluginManager.install(maybePluginId);
+      await PluginsService.install(maybePluginId);
     });
 }

@@ -1,4 +1,4 @@
-import { TranslateManager } from '@/src/commands/i18n/translate/translate-manager';
+import { I18nService } from '@/src/commands/i18n/i18n-service';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import prompts from 'prompts';
@@ -12,22 +12,7 @@ export function createTranslateI18nCommand(parentCommand: Command) {
     .action(async (sourceLocale, targetLocale) => {
       const locales = await promptLocales(sourceLocale, targetLocale);
 
-      await TranslateManager.translate(
-        locales.sourceLocale,
-        locales.targetLocale
-      );
-    });
-}
-
-export function createVerifyI18nCommand(parentCommand: Command) {
-  return parentCommand
-    .command('verify')
-    .argument('[base-locale]', 'Base Locale')
-    .description(
-      'Verify i18n files have no missing keys compared to base locale'
-    )
-    .action(async (baseLocale) => {
-      await TranslateManager.verify(baseLocale || 'en');
+      await I18nService.translate(locales.sourceLocale, locales.targetLocale);
     });
 }
 

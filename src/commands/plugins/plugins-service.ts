@@ -11,7 +11,7 @@ enum PluginAction {
   Pull = 'pull',
 }
 
-export class PluginManager {
+export class PluginsService {
   static async install(pluginId?: string) {
     const action = PluginAction.Add;
     const plugin = pluginId || (await getPluginFromPrompts(action));
@@ -94,7 +94,8 @@ async function executePluginCommand({
   branch: string;
   folder: string;
 }) {
-  const spinner = ora(`Installing plugin...`).start();
+  const verb = action === PluginAction.Add ? 'Installing' : 'Updating';
+  const spinner = ora(`${verb} plugin...`).start();
   const commandString = `git subtree ${action} --prefix ${folder} ${repository} ${branch} --squash`;
 
   try {
