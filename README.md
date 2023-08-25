@@ -120,6 +120,27 @@ To verify that your i18n files are in sync, you can use the `i18n verify` comman
 
 If you omit the `base-locale` argument, the command will use `en` as the base.
 
+## Blog
+
+The CLI can help you generate your blog posts. 
+
+### Generating a new blog post
+
+To generate a new blog post, you can use the `blog generate` command:
+
+```
+> makerkit blog generate
+```
+
+You will be prompted to enter the following information:
+1. **Title**: The title of the blog post
+2. **Category**: The category of the blog post. At this time, this file 
+   needs to exist in 
+   your Makerkit repository. You can create it later.
+3. **Word Count**: The target word count of the blog post.
+4. **Prompt**: Any additional information you want to add to the prompt 
+   (optional).
+
 ## Licenses
 
 The CLI can help you manage your licenses.
