@@ -15,10 +15,10 @@ You may need to use `sudo` to install the CLI globally.
 Alternatively, your can run commands using `npx`:
 
 ```
-npx @makerkit/cli <command>
+npx @makerkit/cli@latest <command>
 ```
 
-Simply replace the examples below with `npx @makerkit/cli` instead of 
+Simply replace the examples below with `npx @makerkit/cli@latest` instead of 
 `makerkit` to run the commands without installing the CLI globally.
 
 ## Usage
@@ -39,6 +39,7 @@ Commands:
   plugins                     List and install plugins.
   i18n                        Manage and translate your i18n files
   license                     Manage Licenses
+  blog                        Manage and generate your blog posts
   help [command]              display help for command
 ```
 

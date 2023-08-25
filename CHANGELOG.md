@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.0 - 2023-08-25
+
+- Added `blog generate` command to generate blog posts using OpenAI.
+
 ## 1.1.1 - 2023-08-25
 
 - Added `license` command to activate a Makerkit license using the CLI.

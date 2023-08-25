@@ -58,5 +58,7 @@ async function detectKitVersion() {
 }
 
 async function getPackageJson(): Promise<Record<string, unknown>> {
-  return fs.readJSON(join(process.cwd(), 'package.json'));
+  return fs
+    .readJSON(join(process.cwd(), 'package.json'))
+    .catch(() => undefined);
 }
