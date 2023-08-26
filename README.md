@@ -43,6 +43,25 @@ Commands:
   help [command]              display help for command
 ```
 
+### Adding an OpenAI Key (optional)
+
+To use the generative AI features of the CLI, you will need to add an OpenAI 
+key. 
+
+To do so, create a `.env.local` file if it does not exist yet, and add the
+following environment variable:
+
+```
+OPENAI_API_KEY=<your-key>
+```
+
+This key will be used to generate the prompts for your blog posts. It
+remains locally on your computer and is not shared with anyone.
+
+At the moment of writing, the CLI only uses the OpenAI API to generate:
+1. Translations for your i18n files
+2. Blog Posts
+
 ## Creating a new Makerkit project
 
 To create a new Makerkit project, you can use the `new` command:
@@ -123,6 +142,8 @@ If you omit the `base-locale` argument, the command will use `en` as the base.
 ## Blog
 
 The CLI can help you generate your blog posts. 
+
+NB: this command requires you to setup an OpenAI key.
 
 ### Generating a new blog post
 
