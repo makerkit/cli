@@ -7,6 +7,12 @@ export const PluginsModel = {
     branch: `cookie-banner`,
     description: `Add a cookie banner to your site.`,
   },
+  AiChatBot: {
+    name: `AI Chatbot`,
+    id: `chatbot`,
+    branch: `chatbot`,
+    description: `Add an AI Chatbot to your site.`,
+  },
 };
 
 export function getPluginById(id: string) {

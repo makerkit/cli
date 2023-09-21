@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.0 - 2023-09-21
+
+- Added `chatbot` plugin to add a chatbot to the Next.js Supabase Kit.
+
 ## 1.2.0 - 2023-08-25
 
 - Added `blog generate` command to generate blog posts using OpenAI.

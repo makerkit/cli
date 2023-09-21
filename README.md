@@ -21,6 +21,8 @@ npx @makerkit/cli@latest <command>
 Simply replace the examples below with `npx @makerkit/cli@latest` instead of 
 `makerkit` to run the commands without installing the CLI globally.
 
+Using `npx @makerkit/cli@latest` is recommended.
+
 ## Usage
 
 Running the CLI without any arguments will display the help:
