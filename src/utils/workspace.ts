@@ -40,7 +40,7 @@ async function detectKitVersion() {
     return KitsModel.NextJsFirebase;
   }
 
-  if (deps.includes('next') && deps.includes('supabase')) {
+  if (deps.includes('next') && deps.includes('@supabase/supabase-js')) {
     return KitsModel.NextJsSupabase;
   }
 
@@ -48,7 +48,10 @@ async function detectKitVersion() {
     return KitsModel.NextJsSupabaseLite;
   }
 
-  if (deps.includes('@remix-run/react') && deps.includes('supabase')) {
+  if (
+    deps.includes('@remix-run/react') &&
+    deps.includes('@supabase/supabase-js')
+  ) {
     return KitsModel.RemixSupabase;
   }
 

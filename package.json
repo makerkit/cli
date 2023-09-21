@@ -1,9 +1,13 @@
 {
   "name": "@makerkit/cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A CLI for Makerkit",
   "type": "module",
   "exports": "./dist/index.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "bin": {
     "makerkit": "./dist/index.js"
   },
