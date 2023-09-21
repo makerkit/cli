@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.3.0 - 2023-09-21
+## 1.2.1 - 2023-09-21
 
 - Added `chatbot` plugin to add a chatbot to the Next.js Supabase Kit.
 
