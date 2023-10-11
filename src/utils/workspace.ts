@@ -44,10 +44,6 @@ async function detectKitVersion() {
     return KitsModel.NextJsSupabase;
   }
 
-  if (deps.includes('@remix-run/react') && deps.includes('firebase')) {
-    return KitsModel.NextJsSupabaseLite;
-  }
-
   if (
     deps.includes('@remix-run/react') &&
     deps.includes('@supabase/supabase-js')

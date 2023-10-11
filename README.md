@@ -2,6 +2,8 @@
 
 The CLI is a set of commands that help you manage your Makerkit SaaS Starter Kits.
 
+The CLI is currently in beta.
+
 ## Installation
 
 To install the CLI, you can use npm:
@@ -22,6 +24,9 @@ Simply replace the examples below with `npx @makerkit/cli@latest` instead of
 `makerkit` to run the commands without installing the CLI globally.
 
 Using `npx @makerkit/cli@latest` is recommended.
+
+NB: commands that interact with the repository (plugins, i18n, blog) must be 
+launched from the root of the repository.
 
 ## Usage
 
@@ -69,7 +74,7 @@ At the moment of writing, the CLI only uses the OpenAI API to generate:
 To create a new Makerkit project, you can use the `new` command:
 
 ```
-> makerkit new
+> npx @makerkit/cli@latest new
 ```
 
 The CLI will prompt you to select a starter kit to use and a name. Once 
@@ -87,7 +92,7 @@ The CLI can help you manage plugins in your project. You can list the available 
 To list the available plugins, you can use the `plugins list` command:
 
 ```
-> makerkit plugins list
+> npx @makerkit/cli@latest plugins list
 
 Available plugins:
   - cookie-banner
@@ -98,7 +103,7 @@ Available plugins:
 To install a plugin, you can use the `plugins install` command:
 
 ```
-> makerkit plugins install
+> npx @makerkit/cli@latest plugins install
 ```
 
 This command will prompt you to select a plugin to install. Once selected, the plugin will be installed in your project.
@@ -108,7 +113,7 @@ This command will prompt you to select a plugin to install. Once selected, the p
 To update a plugin, you can use the `plugins update` command:
 
 ```
-> makerkit plugins update
+> npx @makerkit/cli@latest plugins update
 ```
 
 This command will prompt you to select a plugin to update. Once selected, the plugin will be updated in your project.
@@ -124,7 +129,7 @@ in sync between each other.
 To translate your i18n files, you can use the `i18n translate` command:
 
 ```
-> makerkit i18n translate en es
+> npx @makerkit/cli@latest i18n translate en es
 ```
 
 This command will translate all the keys in your `en/*.json` file to `es/*.
@@ -136,7 +141,7 @@ add a valid OpenAI API key in the `.env.local` file of your Makerkit repository.
 To verify that your i18n files are in sync, you can use the `i18n verify` command:
 
 ```
-> makerkit i18n verify <base-locale>
+> npx @makerkit/cli@latest i18n verify <base-locale>
 ```
 
 If you omit the `base-locale` argument, the command will use `en` as the base.
@@ -152,7 +157,7 @@ NB: this command requires you to setup an OpenAI key.
 To generate a new blog post, you can use the `blog generate` command:
 
 ```
-> makerkit blog generate
+> npx @makerkit/cli@latest blog generate
 ```
 
 You will be prompted to enter the following information:
@@ -173,7 +178,7 @@ The CLI can help you manage your licenses.
 To activate your Makerkit license, you can use the `license activate` command:
 
 ```
-> makerkit license activate
+> npx @makerkit/cli@latest license activate
 ```
 
 This command will prompt you to enter your license key and your Github username. Once entered, the command will activate your license.
