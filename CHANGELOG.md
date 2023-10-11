@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.5 - 2023-10-11
+
+- Added feedback plugin
+
 ## 1.2.4 - 2023-10-11
 
 - Fix kit detection

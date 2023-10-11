@@ -6,27 +6,19 @@ The CLI is currently in beta.
 
 ## Installation
 
-To install the CLI, you can use npm:
-
-```
-npm install -g @makerkit/cli
-```
-
-You may need to use `sudo` to install the CLI globally.
-
-Alternatively, your can run commands using `npx`:
+You can run commands using `npx`:
 
 ```
 npx @makerkit/cli@latest <command>
 ```
 
-Simply replace the examples below with `npx @makerkit/cli@latest` instead of 
-`makerkit` to run the commands without installing the CLI globally.
+This ensures that you always run the latest version of the CLI.
 
-Using `npx @makerkit/cli@latest` is recommended.
+### Some commands require a Makerkit repository
 
-NB: commands that interact with the repository (plugins, i18n, blog) must be 
-launched from the root of the repository.
+Commands that interact with the repository (plugins, i18n, blog) must be 
+launched from the root of the repository, as they will read and write files 
+from the codebase.
 
 ## Usage
 

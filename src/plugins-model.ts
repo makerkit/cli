@@ -13,6 +13,12 @@ export const PluginsModel = {
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
   },
+  FeedbackPopup: {
+    name: `Feedback Popup`,
+    id: `feedback-popup`,
+    branch: `feedback-popup`,
+    description: `Add a feedback popup to your site.`,
+  },
 };
 
 export function getPluginById(id: string) {

@@ -16,7 +16,11 @@ export const KitsModel = {
     localePath: `public/locales`,
     blogPath: `src/content/posts`,
     repository: `git@github.com:makerkit/next-supabase-saas-kit`,
-    plugins: [PluginsModel.CookieBanner.id, PluginsModel.AiChatBot.id],
+    plugins: [
+      PluginsModel.AiChatBot.id,
+      PluginsModel.FeedbackPopup.id,
+      PluginsModel.CookieBanner.id,
+    ],
   },
   NextJsSupabaseLite: {
     name: `Next.js Supabase Lite`,
