@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.6 - 2023-10-12
+
+- Added plugins to Remix Supabase kit
+- 
 ## 1.2.5 - 2023-10-11
 
 - Added feedback plugin

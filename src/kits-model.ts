@@ -42,9 +42,13 @@ export const KitsModel = {
     name: `Remix Supabase`,
     id: `remix-supabase`,
     localePath: `public/locales`,
-    blogPath: '',
+    blogPath: `app/content/posts`,
     repository: `git@github.com:makerkit/remix-supabase-saas-kit`,
-    plugins: [],
+    plugins: [
+      PluginsModel.AiChatBot.id,
+      PluginsModel.FeedbackPopup.id,
+      PluginsModel.CookieBanner.id,
+    ],
   },
 };
 
