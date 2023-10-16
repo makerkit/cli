@@ -8,7 +8,7 @@ export const KitsModel = {
     repository: `git@github.com:makerkit/next-firebase-saas-kit`,
     blogPath: `_posts`,
     localePath: `public/locales`,
-    plugins: [PluginsModel.CookieBanner.id],
+    plugins: [PluginsModel.CookieBanner.id, PluginsModel.FeedbackPopup.id],
   },
   NextJsSupabase: {
     name: `Next.js Supabase`,
