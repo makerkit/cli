@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.9 - 2023-10-17
+
+- Added AI Chatbot plugin to Next.js Firebase kit
+
+## 1.2.8 - 2023-10-16
+
+- Republish 1.2.7
+
 ## 1.2.7 - 2023-10-16
 
 - Added Feedback plugin to Next.js Firebase kit

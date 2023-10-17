@@ -1,6 +1,6 @@
 {
   "name": "@makerkit/cli",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "A CLI for Makerkit",
   "type": "module",
   "exports": "./dist/index.js",
@@ -21,7 +21,7 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "author": "Giancarlo Buomprisco",
   "license": "ISC",
