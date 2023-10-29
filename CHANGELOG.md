@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.10 - 2023-10-29
+
+- Added AI Text Editor plugin to Supabase kits
+
 ## 1.2.9 - 2023-10-17
 
 - Added AI Chatbot plugin to Next.js Firebase kit

@@ -19,6 +19,12 @@ export const PluginsModel = {
     branch: `feedback-popup`,
     description: `Add a feedback popup to your site.`,
   },
+  AiTextEditor: {
+    name: `AI Text Editor`,
+    id: `text-editor`,
+    branch: `text-editor`,
+    description: `Add an AI Text Editor to your site.`,
+  },
 };
 
 export function getPluginById(id: string) {

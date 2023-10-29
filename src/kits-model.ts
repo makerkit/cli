@@ -24,6 +24,7 @@ export const KitsModel = {
       PluginsModel.AiChatBot.id,
       PluginsModel.FeedbackPopup.id,
       PluginsModel.CookieBanner.id,
+      PluginsModel.AiTextEditor.id,
     ],
   },
   NextJsSupabaseLite: {
@@ -52,6 +53,7 @@ export const KitsModel = {
       PluginsModel.AiChatBot.id,
       PluginsModel.FeedbackPopup.id,
       PluginsModel.CookieBanner.id,
+      PluginsModel.AiTextEditor.id,
     ],
   },
 };
