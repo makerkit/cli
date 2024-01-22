@@ -4,6 +4,8 @@ The CLI is a set of commands that help you manage your Makerkit SaaS Starter Kit
 
 The CLI is currently in beta.
 
+NB: the CLI uses SSH to connect to GitHub. If you are not using SSH on your local machine, it will not work. In that case, please use the manual git commands instead.
+
 ## Installation
 
 You can run commands using `npx`:
