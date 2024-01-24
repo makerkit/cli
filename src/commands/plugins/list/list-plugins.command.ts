@@ -10,6 +10,11 @@ export function createListPluginsCommand(parentCommand: Command) {
     .action(() => {
       const kits = Object.values(KitsModel);
 
+      console.log(chalk.white('Makerkit available plugins...'));
+      console.log(
+        `[${chalk.green('Plugin Name')} (${chalk.gray('plugin-id')})]\n`
+      );
+
       for (const kit of kits) {
         console.log(`${chalk.cyan(kit.name)}`);
 
@@ -20,8 +25,8 @@ export function createListPluginsCommand(parentCommand: Command) {
         }
 
         for (const plugin of kit.plugins) {
-          const { name } = validatePlugin(plugin);
-          console.log(`- ${chalk.green(name)}`);
+          const { name, id } = validatePlugin(plugin);
+          console.log(`- ${chalk.green(name)} (${chalk.gray(id)})`);
         }
 
         console.log('');
