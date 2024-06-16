@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.0 - 2024-06-16
+
+- Added `waitlist` plugin and introduced Turbo repositories
+
 ## 1.2.10 - 2023-10-29
 
 - Added AI Text Editor plugin to Supabase kits

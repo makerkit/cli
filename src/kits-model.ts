@@ -27,6 +27,24 @@ export const KitsModel = {
       PluginsModel.AiTextEditor.id,
     ],
   },
+  NextJsSupabaseTurbo: {
+    name: `Next.js Supabase Turbo`,
+    id: `next-supabase-turbo`,
+    localePath: `apps/web/public/locales`,
+    blogPath: `apps/web/content/posts`,
+    repository: `git@github.com:makerkit/next-supabase-saas-kit-turbo`,
+    plugins: [
+      PluginsModel.Waitlist.id,
+    ],
+  },
+  RemixSupabaseTurbo: {
+    name: `Remix Supabase Turbo`,
+    id: `remix-supabase-turbo`,
+    localePath: `apps/web/public/locales`,
+    blogPath: `apps/web/content/posts`,
+    repository: `git@github.com:makerkit/remix-supabase-saas-kit-turbo`,
+    plugins: [],
+  },
   NextJsSupabaseLite: {
     name: `Next.js Supabase Lite`,
     id: `next-supabase-lite`,

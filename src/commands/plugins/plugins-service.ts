@@ -52,7 +52,7 @@ async function initPluginCommand(pluginId: string, action: PluginAction) {
     action,
     repository,
     branch: plugin.branch,
-    folder: `plugins/${plugin.branch}`,
+    folder: plugin.folder,
   });
 }
 

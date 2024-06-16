@@ -6,24 +6,35 @@ export const PluginsModel = {
     id: `cookie-banner`,
     branch: `cookie-banner`,
     description: `Add a cookie banner to your site.`,
+    folder: `plugins/cookie-banner`
   },
   AiChatBot: {
     name: `AI Chatbot`,
     id: `chatbot`,
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
+    folder: `plugins/chatbot`
   },
   FeedbackPopup: {
     name: `Feedback Popup`,
     id: `feedback-popup`,
     branch: `feedback-popup`,
     description: `Add a feedback popup to your site.`,
+    folder: `plugins/feedback-popup`
   },
   AiTextEditor: {
     name: `AI Text Editor`,
     id: `text-editor`,
     branch: `text-editor`,
     description: `Add an AI Text Editor to your site.`,
+    folder: `plugins/text-editor`
+  },
+  Waitlist: {
+    name: `Waitlist`,
+    id: `waitlist`,
+    branch: `waitlist`,
+    description: `Add a waitlist to your site.`,
+    folder: `packages/plugins/waitlist`
   },
 };
 

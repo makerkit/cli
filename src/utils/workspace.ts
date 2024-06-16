@@ -26,7 +26,7 @@ export class Workspace {
 }
 
 async function detectKitVersion() {
-  const packageJson = await getPackageJson();
+  let packageJson = await getPackageJson();
 
   if (!packageJson) {
     throw new Error(
@@ -34,7 +34,24 @@ async function detectKitVersion() {
     );
   }
 
-  const deps = Object.keys(packageJson.dependencies ?? []);
+  let deps = Object.keys(packageJson.dependencies ?? []);
+
+  if (deps.includes('turbo')) {
+    // locate apps/web
+    packageJson = await fs.readJSON(
+      join(process.cwd(), 'apps/web/package.json')
+    );
+  }
+
+  deps = Object.keys(packageJson.dependencies ?? []);
+
+  if (deps.includes('next')) {
+    return KitsModel.NextJsSupabaseTurbo;
+  }
+
+  if (deps.includes('@remix-run/react')) {
+    return KitsModel.RemixSupabaseTurbo;
+  }
 
   if (deps.includes('next') && deps.includes('firebase')) {
     return KitsModel.NextJsFirebase;
