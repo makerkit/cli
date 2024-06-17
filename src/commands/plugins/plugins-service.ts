@@ -57,12 +57,18 @@ async function initPluginCommand(pluginId: string, action: PluginAction) {
 }
 
 async function getPluginFromPrompts(action: PluginAction) {
-  const choices = Object.values(PluginsModel).map((plugin) => {
-    return {
-      title: plugin.name,
-      value: plugin.id,
-    };
-  });
+  const kit = await Workspace.getKitMeta();
+
+  const choices = Object.values(PluginsModel)
+    .filter((plugin) => {
+      return kit.plugins.includes(plugin.id);
+    })
+    .map((plugin) => {
+      return {
+        title: plugin.name,
+        value: plugin.id,
+      };
+    });
 
   const verb = action === PluginAction.Add ? 'install' : 'update';
 

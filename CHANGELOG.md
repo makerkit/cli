@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.1 - 2024-06-18
+
+- Only list plugins compatible with the current kit
+
 ## 1.3.0 - 2024-06-16
 
 - Added `waitlist` plugin and introduced Turbo repositories
