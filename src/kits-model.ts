@@ -35,6 +35,9 @@ export const KitsModel = {
     repository: `git@github.com:makerkit/next-supabase-saas-kit-turbo`,
     plugins: [
       PluginsModel.Waitlist.id,
+      PluginsModel.AiChatBotTurbo.id,
+      PluginsModel.FeedbackPopupTurbo.id,
+      PluginsModel.AiTextEditorTurbo.id,
     ],
   },
   RemixSupabaseTurbo: {

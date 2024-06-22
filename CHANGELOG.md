@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.2 - 2024-06-22
+
+- Added more plugins to the Next.js Supabase kit
+
 ## 1.3.1 - 2024-06-18
 
 - Only list plugins compatible with the current kit
