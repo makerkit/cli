@@ -162,17 +162,3 @@ You will be prompted to enter the following information:
 3. **Word Count**: The target word count of the blog post.
 4. **Prompt**: Any additional information you want to add to the prompt 
    (optional).
-
-## Licenses
-
-The CLI can help you manage your licenses.
-
-### Activating your Makerkit License
-
-To activate your Makerkit license, you can use the `license activate` command:
-
-```
-> npx @makerkit/cli@latest license activate
-```
-
-This command will prompt you to enter your license key and your Github username. Once entered, the command will activate your license.

@@ -10,21 +10,21 @@ export const PluginsModel = {
   },
   AiChatBot: {
     name: `AI Chatbot`,
-    id: `chatbot`,
+    id: `chatbot-v1`,
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
     folder: `plugins/chatbot`
   },
   FeedbackPopup: {
     name: `Feedback Popup`,
-    id: `feedback-popup`,
+    id: `feedback-popup-v1`,
     branch: `feedback-popup`,
     description: `Add a feedback popup to your site.`,
     folder: `plugins/feedback-popup`
   },
   AiTextEditor: {
     name: `AI Text Editor`,
-    id: `text-editor`,
+    id: `text-editor-v1`,
     branch: `text-editor`,
     description: `Add an AI Text Editor to your site.`,
     folder: `plugins/text-editor`
@@ -32,7 +32,7 @@ export const PluginsModel = {
   AiTextEditorTurbo: {
     name: `AI Text Editor`,
     id: `text-editor`,
-    branch: `text-editor-turbo`,
+    branch: `text-editor`,
     description: `Add an AI Text Editor to your site.`,
     folder: `packages/plugins/text-editor`
   },
@@ -45,14 +45,14 @@ export const PluginsModel = {
   },
   FeedbackPopupTurbo: {
     name: `Feedback Popup`,
-    id: `feedback-popup-turbo`,
-    branch: `feedback-popup`,
+    id: `feedback`,
+    branch: `feedback`,
     description: `Add a feedback popup to your site.`,
     folder: `packages/plugins/feedback`
   },
   AiChatBotTurbo: {
     name: `AI Chatbot`,
-    id: `chatbot-turbo`,
+    id: `chatbot`,
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
     folder: `packages/plugins/chatbot`

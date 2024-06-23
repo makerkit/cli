@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.3 - 2024-06-23
+
+- Updated IDs of the turbo plugins
+
 ## 1.3.2 - 2024-06-22
 
 - Added more plugins to the Next.js Supabase kit

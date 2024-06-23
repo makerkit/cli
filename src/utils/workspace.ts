@@ -10,7 +10,7 @@ export class Workspace {
 
     return {
       ...kit,
-      version: packageJson.version,
+      version: packageJson.version ?? 'unknown'
     };
   }
 
@@ -19,7 +19,7 @@ export class Workspace {
 
     console.log(
       `Makerkit version: ${chalk.cyan(meta.name)} - ${chalk.cyan(
-        meta.version
+        meta.version ?? 'unknown'
       )}.\n`
     );
   }
