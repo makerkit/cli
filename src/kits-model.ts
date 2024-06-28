@@ -46,7 +46,12 @@ export const KitsModel = {
     localePath: `apps/web/public/locales`,
     blogPath: `apps/web/content/posts`,
     repository: `git@github.com:makerkit/remix-supabase-saas-kit-turbo`,
-    plugins: [],
+    plugins: [
+      PluginsModel.Waitlist.id,
+      PluginsModel.AiChatBotTurbo.id,
+      PluginsModel.FeedbackPopupTurbo.id,
+      PluginsModel.AiTextEditorTurbo.id,
+    ],
   },
   NextJsSupabaseLite: {
     name: `Next.js Supabase Lite`,
