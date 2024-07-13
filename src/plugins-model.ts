@@ -57,6 +57,13 @@ export const PluginsModel = {
     description: `Add an AI Chatbot to your site.`,
     folder: `packages/plugins/chatbot`
   },
+  Testimonial: {
+    name: `Testimonial`,
+    id: `testimonial`,
+    branch: `testimonial`,
+    description: `Add a testimonial to your site.`,
+    folder: `packages/plugins/testimonial`
+  },
 };
 
 export function getPluginById(id: string) {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.4 - 2024-07-14
+
+- Added Testimonial Plugin to Next.js Supabase kit
+
 ## 1.3.3 - 2024-06-23
 
 - Updated IDs of the turbo plugins
