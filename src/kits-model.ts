@@ -49,6 +49,7 @@ export const KitsModel = {
     repository: `git@github.com:makerkit/remix-supabase-saas-kit-turbo`,
     plugins: [
       PluginsModel.Waitlist.id,
+      PluginsModel.Testimonial.id,
       PluginsModel.AiChatBotTurbo.id,
       PluginsModel.FeedbackPopupTurbo.id,
       PluginsModel.AiTextEditorTurbo.id,
