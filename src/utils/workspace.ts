@@ -10,7 +10,7 @@ export class Workspace {
 
     return {
       ...kit,
-      version: packageJson.version ?? 'unknown'
+      version: packageJson.version ?? 'unknown',
     };
   }
 
@@ -41,16 +41,16 @@ async function detectKitVersion() {
     packageJson = await fs.readJSON(
       join(process.cwd(), 'apps/web/package.json')
     );
-  }
 
-  deps = Object.keys(packageJson.dependencies ?? []);
+    deps = Object.keys(packageJson.dependencies ?? []);
 
-  if (deps.includes('next')) {
-    return KitsModel.NextJsSupabaseTurbo;
-  }
+    if (deps.includes('next')) {
+      return KitsModel.NextJsSupabaseTurbo;
+    }
 
-  if (deps.includes('@remix-run/react')) {
-    return KitsModel.RemixSupabaseTurbo;
+    if (deps.includes('@remix-run/react')) {
+      return KitsModel.RemixSupabaseTurbo;
+    }
   }
 
   if (deps.includes('next') && deps.includes('firebase')) {
