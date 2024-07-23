@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.7 - 2024-07-23
+
+- Added Analytics Plugins to Next.js Supabase kit
+
 ## 1.3.5 - 2024-07-14
 
 - Added Testimonial Plugin to Remix Supabase kit

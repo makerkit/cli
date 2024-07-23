@@ -39,6 +39,9 @@ export const KitsModel = {
       PluginsModel.AiChatBotTurbo.id,
       PluginsModel.FeedbackPopupTurbo.id,
       PluginsModel.AiTextEditorTurbo.id,
+      PluginsModel.GoogleAnalytics.id,
+      PluginsModel.Posthog.id,
+      PluginsModel.Umami.id,
     ],
   },
   RemixSupabaseTurbo: {

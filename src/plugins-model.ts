@@ -6,63 +6,84 @@ export const PluginsModel = {
     id: `cookie-banner`,
     branch: `cookie-banner`,
     description: `Add a cookie banner to your site.`,
-    folder: `plugins/cookie-banner`
+    folder: `plugins/cookie-banner`,
   },
   AiChatBot: {
     name: `AI Chatbot`,
     id: `chatbot-v1`,
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
-    folder: `plugins/chatbot`
+    folder: `plugins/chatbot`,
   },
   FeedbackPopup: {
     name: `Feedback Popup`,
     id: `feedback-popup-v1`,
     branch: `feedback-popup`,
     description: `Add a feedback popup to your site.`,
-    folder: `plugins/feedback-popup`
+    folder: `plugins/feedback-popup`,
   },
   AiTextEditor: {
     name: `AI Text Editor`,
     id: `text-editor-v1`,
     branch: `text-editor`,
     description: `Add an AI Text Editor to your site.`,
-    folder: `plugins/text-editor`
+    folder: `plugins/text-editor`,
   },
   AiTextEditorTurbo: {
     name: `AI Text Editor`,
     id: `text-editor`,
     branch: `text-editor`,
     description: `Add an AI Text Editor to your site.`,
-    folder: `packages/plugins/text-editor`
+    folder: `packages/plugins/text-editor`,
   },
   Waitlist: {
     name: `Waitlist`,
     id: `waitlist`,
     branch: `waitlist`,
     description: `Add a waitlist to your site.`,
-    folder: `packages/plugins/waitlist`
+    folder: `packages/plugins/waitlist`,
   },
   FeedbackPopupTurbo: {
     name: `Feedback Popup`,
     id: `feedback`,
     branch: `feedback`,
     description: `Add a feedback popup to your site.`,
-    folder: `packages/plugins/feedback`
+    folder: `packages/plugins/feedback`,
   },
   AiChatBotTurbo: {
     name: `AI Chatbot`,
     id: `chatbot`,
     branch: `chatbot`,
     description: `Add an AI Chatbot to your site.`,
-    folder: `packages/plugins/chatbot`
+    folder: `packages/plugins/chatbot`,
   },
   Testimonial: {
     name: `Testimonial`,
     id: `testimonial`,
     branch: `testimonial`,
     description: `Add a testimonial to your site.`,
-    folder: `packages/plugins/testimonial`
+    folder: `packages/plugins/testimonial`,
+  },
+  GoogleAnalytics: {
+    name: `Google Analytics`,
+    id: `google-analytics`,
+    branch: `google-analytics`,
+    description: `Add Google Analytics to your site.`,
+    folder: `packages/plugins/analytics/google-analytics`,
+  },
+  Posthog: {
+    name: `Posthog`,
+    id: `posthog`,
+    branch: `posthog`,
+    description: `Add Posthog Analytics to your site.`,
+    folder: `packages/plugins/analytics/posthog`,
+  },
+  Umami: {
+    name: `Umami`,
+    id: `umami`,
+    branch: `umami`,
+    description: `Add Umami Analytics to your site.`,
+    folder: `packages/plugins/analytics/umami`,
   },
 };
 
