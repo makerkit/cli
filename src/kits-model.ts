@@ -36,6 +36,8 @@ export const KitsModel = {
     plugins: [
       PluginsModel.Waitlist.id,
       PluginsModel.Testimonial.id,
+      PluginsModel.Roadmap.id,
+      PluginsModel.Kanban.id,
       PluginsModel.AiChatBotTurbo.id,
       PluginsModel.FeedbackPopupTurbo.id,
       PluginsModel.AiTextEditorTurbo.id,

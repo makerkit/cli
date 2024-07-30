@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.10 - 2024-07-30
+
+- Added `kanban` and `roadmap` plugins to Next.js Supabase kit model
+
 ## 1.3.9 - 2024-07-30
 
 - Added `kanban` plugin to Next.js Supabase kit
