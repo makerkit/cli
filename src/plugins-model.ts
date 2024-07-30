@@ -64,6 +64,20 @@ export const PluginsModel = {
     description: `Add a testimonial to your site.`,
     folder: `packages/plugins/testimonial`,
   },
+  Roadmap: {
+    name: `Roadmap`,
+    id: `roadmap`,
+    branch: `roadmap`,
+    description: `Add a Roadmap to your site.`,
+    folder: `packages/plugins/roadmap`,
+  },
+  Kanban: {
+    name: `Kanban`,
+    id: `kanban`,
+    branch: `kanban`,
+    description: `Add a Kanban component to your site.`,
+    folder: `packages/plugins/kanban`,
+  },
   GoogleAnalytics: {
     name: `Google Analytics`,
     id: `google-analytics`,
