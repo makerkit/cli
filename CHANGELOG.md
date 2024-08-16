@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.11 - 2024-08-16
+- Added analytics plugins to the Remix Supabase kit
+
 ## 1.3.10 - 2024-07-30
 
 - Added `kanban` and `roadmap` plugins to Next.js Supabase kit model

@@ -1,6 +1,6 @@
 {
   "name": "@makerkit/cli",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "description": "A CLI for Makerkit",
   "type": "module",
   "exports": "./dist/index.js",
