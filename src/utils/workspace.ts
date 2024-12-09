@@ -36,6 +36,10 @@ async function detectKitVersion() {
 
   let deps = Object.keys(packageJson.dependencies ?? []);
 
+  if (deps.length === 0) {
+    deps = Object.keys(packageJson.devDependencies ?? []);
+  }
+
   if (deps.includes('turbo')) {
     // locate apps/web
     packageJson = await fs.readJSON(
@@ -43,10 +47,6 @@ async function detectKitVersion() {
     );
 
     deps = Object.keys(packageJson.dependencies ?? []);
-
-    if (deps.length === 0) {
-      deps = Object.keys(packageJson.devDependencies ?? []);
-    }
 
     if (deps.includes('next')) {
       return KitsModel.NextJsSupabaseTurbo;
