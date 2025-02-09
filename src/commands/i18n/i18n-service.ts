@@ -59,8 +59,9 @@ export class I18nService {
    * @description Translates the locale files from source to target
    * @param source
    * @param target
+   * @param files
    */
-  static async translate(source: string, target: string) {
+  static async translate(source: string, target: string, files: string[]) {
     const kit = await Workspace.getKitMeta();
     const client = getOpenAIClient();
 
@@ -73,13 +74,23 @@ export class I18nService {
       throw new Error(`Source locale at ${sourceLocalePath} not found`);
     }
 
-    const files = fs.readdirSync(sourceLocalePath).filter((file) => {
-      return file.endsWith('.json');
-    });
+    // Get all JSON files in the source locale path
+    let availableFiles = fs
+      .readdirSync(sourceLocalePath)
+      .filter((file) => file.endsWith('.json'));
 
-    console.log(`Found the following files: ${files.join(', ')}`);
+    // If specific files were passed, filter only those
+    if (files.length > 0) {
+      availableFiles = availableFiles.filter((file) => files.includes(file));
 
-    for (const file of files) {
+      if (availableFiles.length === 0) {
+        throw new Error(
+          `None of the specified files exist in ${sourceLocalePath}`
+        );
+      }
+    }
+
+    for (const file of availableFiles) {
       const data: Record<string, string | Record<string, string | NestedKey>> =
         {};
 
@@ -96,11 +107,13 @@ export class I18nService {
       console.log(chalk.green(`File "${file}" successfully translated!`));
       console.log(chalk.cyan(`Writing file "${file}" to ${targetJsonPath}`));
 
-      // check if targetJsonPath exists, if not, create it
-      (await fs.exists(targetJsonPath)) || (await fs.mkdir(targetJsonPath));
+      // Ensure target directory exists
+      if (!(await fs.exists(targetJsonPath))) {
+        await fs.mkdir(targetJsonPath, { recursive: true });
+      }
 
-      // write file to targetJsonPath
-      await fs.writeJSON(join(targetJsonPath, file), data, {});
+      // Write translated JSON file
+      await fs.writeJSON(join(targetJsonPath, file), data, { spaces: 2 });
 
       console.log(chalk.green(`File "${file}" successfully written!`));
     }

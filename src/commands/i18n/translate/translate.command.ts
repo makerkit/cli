@@ -8,11 +8,24 @@ export function createTranslateI18nCommand(parentCommand: Command) {
     .command('translate')
     .argument('[source-locale]', 'Source Locale')
     .argument('[target-locale]', 'Target Locale')
+    .option(
+      '--files <files...>',
+      'Specify files to translate (comma-separated or repeated usage)',
+      (value, previous: string[]) => {
+        // Split comma-separated input and merge with previous array (to handle repeated usage)
+        return previous.concat(value.split(','));
+      },
+      []
+    )
     .description('Translate i18n files from source locale to target locale')
-    .action(async (sourceLocale, targetLocale) => {
+    .action(async (sourceLocale, targetLocale, options) => {
       const locales = await promptLocales(sourceLocale, targetLocale);
 
-      await I18nService.translate(locales.sourceLocale, locales.targetLocale);
+      await I18nService.translate(
+        locales.sourceLocale,
+        locales.targetLocale,
+        options.files
+      );
     });
 }
 

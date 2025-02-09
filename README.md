@@ -130,6 +130,22 @@ This command will translate all the keys in your `en/*.json` file to `es/*.
 json`. It will use the OpenAI API to translate the keys. You will need to 
 add a valid OpenAI API key in the `.env.local` file of your Makerkit repository.
 
+#### Translating Specific Files
+
+You can now specify which files to translate using the `--files` option:
+
+```
+> npx @makerkit/cli@latest i18n translate en es --files=common.json,errors.json
+```
+
+or
+
+```
+> npx @makerkit/cli@latest i18n translate en es --files=common.json --files=errors.json
+```
+
+This will only translate the specified files instead of all `.json` files in the locale folder.
+
 ### Verifying
 
 To verify that your i18n files are in sync, you can use the `i18n verify` command:
