@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { blogCommand } from '@/src/commands/blog/blog.command';
 import { i18nCommand } from '@/src/commands/i18n/i18n.command';
 import { licenseCommand } from '@/src/commands/license/license.command';
 import { newCommand } from '@/src/commands/new/new.command';
@@ -26,8 +25,7 @@ async function main() {
     .addCommand(newCommand)
     .addCommand(pluginsCommand)
     .addCommand(i18nCommand)
-    .addCommand(licenseCommand)
-    .addCommand(blogCommand);
+    .addCommand(licenseCommand);
 
   program.parse();
 }

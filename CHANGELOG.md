@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.14 - 2025-10-01
+- Added Signoz plugin
+- Added Paddle plugin
+
 ## 1.3.11 - 2024-08-16
 - Added analytics plugins to the Remix Supabase kit
 

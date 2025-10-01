@@ -99,6 +99,20 @@ export const PluginsModel = {
     description: `Add Umami Analytics to your site.`,
     folder: `packages/plugins/analytics/umami`,
   },
+  Signoz: {
+    name: `Signoz`,
+    id: `signoz`,
+    branch: `signoz`,
+    description: `Add Signoz Monitoring to your app.`,
+    folder: `packages/plugins/signoz`,
+  },
+  Paddle: {
+    name: `Paddle`,
+    id: `paddle`,
+    branch: `paddle`,
+    description: `Add Paddle Billing to your app.`,
+    folder: `packages/plugins/paddle`,
+  }
 };
 
 export function getPluginById(id: string) {

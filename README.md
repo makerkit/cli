@@ -18,7 +18,7 @@ This ensures that you always run the latest version of the CLI.
 
 ### Some commands require a Makerkit repository
 
-Commands that interact with the repository (plugins, i18n, blog) must be 
+Commands that interact with the repository (plugins, i18n) must be 
 launched from the root of the repository, as they will read and write files 
 from the codebase.
 
@@ -114,7 +114,9 @@ This command will prompt you to select a plugin to update. Once selected, the pl
 
 ## i18n
 
-The CLI can help you manage your i18n files. You can translate from a locale 
+The CLI can help you manage your i18n files. 
+
+You can translate from a locale 
 to another (requires an OpenAI key), and verify that your translations are 
 in sync between each other.
 
@@ -139,26 +141,3 @@ To verify that your i18n files are in sync, you can use the `i18n verify` comman
 ```
 
 If you omit the `base-locale` argument, the command will use `en` as the base.
-
-## Blog
-
-The CLI can help you generate your blog posts. 
-
-NB: this command requires you to setup an OpenAI key.
-
-### Generating a new blog post
-
-To generate a new blog post, you can use the `blog generate` command:
-
-```
-> npx @makerkit/cli@latest blog generate
-```
-
-You will be prompted to enter the following information:
-1. **Title**: The title of the blog post
-2. **Category**: The category of the blog post. At this time, this file 
-   needs to exist in 
-   your Makerkit repository. You can create it later.
-3. **Word Count**: The target word count of the blog post.
-4. **Prompt**: Any additional information you want to add to the prompt 
-   (optional).
