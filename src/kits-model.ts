@@ -44,6 +44,8 @@ export const KitsModel = {
       PluginsModel.GoogleAnalytics.id,
       PluginsModel.Posthog.id,
       PluginsModel.Umami.id,
+      PluginsModel.Signoz.id,
+      PluginsModel.Paddle.id,
     ],
   },
   RemixSupabaseTurbo: {
