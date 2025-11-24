@@ -112,6 +112,13 @@ export const PluginsModel = {
     branch: `paddle`,
     description: `Add Paddle Billing to your app.`,
     folder: `packages/plugins/paddle`,
+  },
+  SupabaseCMS: {
+    name: `Supabase CMS`,
+    id: `supabase-cms`,
+    branch: `supabase-cms`,
+    description: `Add Supabase CMS provider to your app.`,
+    folder: `packages/plugins/supabase-cms`,
   }
 };
 
