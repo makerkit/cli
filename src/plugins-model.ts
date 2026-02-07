@@ -88,7 +88,49 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
         ],
         path: 'packages/plugins/analytics/google-analytics',
       },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_GOOGLE_ANALYTICS_ID',
+            description: 'Google Analytics Measurement ID',
+          },
+        ],
+        path: 'packages/plugins/analytics/google-analytics',
+      },
+      'next-prisma': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_GOOGLE_ANALYTICS_ID',
+            description: 'Google Analytics Measurement ID',
+          },
+        ],
+        path: 'packages/plugins/analytics/google-analytics',
+      }
     },
+  },
+  honeybadger: {
+    name: 'PostHog',
+    id: 'honeybadger',
+    description: 'Add Honeybadger Error Tracking to your site.',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'HONEYBADGER_API_KEY',
+            description: 'Honeybadger private API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_ENVIRONMENT',
+            description: 'Honeybadger environment',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_REVISION',
+            description: 'Honeybadger log revision',
+          }
+        ],
+        path: 'packages/plugins/honeybadger',
+      },
+    }
   },
   posthog: {
     name: 'PostHog',
@@ -96,6 +138,34 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
     description: 'Add PostHog Analytics to your site.',
     variants: {
       'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_KEY',
+            description: 'PostHog project API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_HOST',
+            description: 'PostHog host URL',
+            defaultValue: 'https://app.posthog.com',
+          },
+        ],
+        path: 'packages/plugins/analytics/posthog',
+      },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_KEY',
+            description: 'PostHog project API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_HOST',
+            description: 'PostHog host URL',
+            defaultValue: 'https://app.posthog.com',
+          },
+        ],
+        path: 'packages/plugins/analytics/posthog',
+      },
+      'next-prisma': {
         envVars: [
           {
             key: 'NEXT_PUBLIC_POSTHOG_KEY',
@@ -129,6 +199,32 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
         ],
         path: 'packages/plugins/analytics/umami',
       },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
+            description: 'Umami website ID',
+          },
+          {
+            key: 'NEXT_PUBLIC_UMAMI_HOST',
+            description: 'Umami host URL',
+          },
+        ],
+        path: 'packages/plugins/analytics/umami',
+      },
+      'next-prisma': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
+            description: 'Umami website ID',
+          },
+          {
+            key: 'NEXT_PUBLIC_UMAMI_HOST',
+            description: 'Umami host URL',
+          },
+        ],
+        path: 'packages/plugins/analytics/umami',
+      },
     },
   },
   signoz: {
@@ -137,6 +233,24 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
     description: 'Add SigNoz Monitoring to your app.',
     variants: {
       'next-supabase': {
+        envVars: [
+          {
+            key: 'OTEL_EXPORTER_OTLP_ENDPOINT',
+            description: 'SigNoz OTLP endpoint URL',
+          },
+        ],
+        path: 'packages/plugins/signoz',
+      },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'OTEL_EXPORTER_OTLP_ENDPOINT',
+            description: 'SigNoz OTLP endpoint URL',
+          },
+        ],
+        path: 'packages/plugins/signoz',
+      },
+      'next-prisma': {
         envVars: [
           {
             key: 'OTEL_EXPORTER_OTLP_ENDPOINT',

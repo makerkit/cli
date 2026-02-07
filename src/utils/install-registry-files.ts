@@ -3,24 +3,24 @@ import { dirname, join } from 'path';
 import { execaCommand } from 'execa';
 import fs from 'fs-extra';
 
-interface RegistryFile {
+export interface RegistryFile {
   path: string;
   content: string;
   type: string;
   target: string;
 }
 
-interface RegistryItem {
+export interface RegistryItem {
   name: string;
   files: RegistryFile[];
   dependencies?: Record<string, string>;
 }
 
-export async function installRegistryFiles(
+export async function fetchRegistryItem(
   variant: string,
   pluginId: string,
   username: string,
-): Promise<void> {
+): Promise<RegistryItem> {
   const url = `https://makerkit.dev/r/${variant}/${pluginId}.json?username=${username}`;
 
   const response = await fetch(url);
@@ -37,6 +37,15 @@ export async function installRegistryFiles(
     throw new Error(`Plugin "${pluginId}" has no files in the registry.`);
   }
 
+  return item;
+}
+
+export async function installRegistryFiles(
+  variant: string,
+  pluginId: string,
+  username: string,
+): Promise<void> {
+  const item = await fetchRegistryItem(variant, pluginId, username);
   const cwd = process.cwd();
 
   for (const file of item.files) {

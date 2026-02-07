@@ -1,5 +1,5 @@
 import { PluginRegistry } from '@/src/plugins-model';
-import { getOrPromptUsername } from '@/src/utils/components-json';
+import { getOrPromptUsername } from '@/src/utils/username-cache';
 import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';

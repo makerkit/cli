@@ -63,25 +63,61 @@ The command will also install the dependencies.
 
 ## Plugins
 
-The CLI can help you manage plugins in your project. You can list the available plugins, install them, and update them.
+The CLI can help you manage plugins in your project. You can list, install, update, and diff plugins.
+
+| Command | Description |
+|---------|-------------|
+| `plugins list` | List available and installed plugins |
+| `plugins add [id...]` | Install one or more plugins |
+| `plugins update [id...]` | Update installed plugins to the latest version |
+| `plugins outdated` | Check which installed plugins have updates |
+| `plugins diff [id]` | Show a git-style diff against the latest version |
+| `plugins init` | Set up your GitHub username for registry access |
 
 ### Listing plugins
 
-To list the available plugins, you can use the `plugins list` command:
-
 ```
-> npx @makerkit/cli@latest plugins list
-
-Available plugins:
-  - cookie-banner
+makerkit plugins list
 ```
 
 ### Installing plugins
 
-To install a plugin, you can use the `plugins install` command:
-
 ```
-> npx @makerkit/cli@latest plugins install
+makerkit plugins add feedback
 ```
 
-This command will prompt you to select a plugin to install. Once selected, the plugin will be installed in your project.
+Install multiple at once:
+
+```
+makerkit plugins add umami posthog feedback
+```
+
+Running `plugins add` with no arguments shows a multi-select list of available plugins.
+
+### Updating plugins
+
+```
+makerkit plugins update
+```
+
+Or specify plugin IDs directly:
+
+```
+makerkit plugins update umami feedback
+```
+
+If your local files differ from the registry, the command lists the modified files and asks for confirmation before overwriting.
+
+### Checking for updates
+
+```
+makerkit plugins outdated
+```
+
+### Diffing plugins
+
+```
+makerkit plugins diff umami
+```
+
+Running `plugins diff` with no arguments prompts you to select an installed plugin. Shows a colored unified diff (via `git diff`) between your local files and the latest registry version.

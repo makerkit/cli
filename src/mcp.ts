@@ -12,7 +12,7 @@ import {
 import {
   cacheUsername,
   getCachedUsername,
-} from '@/src/utils/components-json';
+} from '@/src/utils/username-cache';
 import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
@@ -212,7 +212,7 @@ server.registerTool(
 server.registerTool(
   'makerkit_init_registry',
   {
-    description: 'Configure the MakerKit plugin registry in components.json',
+    description: 'Cache the GitHub username used for MakerKit plugin registry authentication',
     inputSchema: {
       projectPath: z.string().describe('Absolute path to the MakerKit project root'),
       githubUsername: z.string().describe('GitHub username registered with your MakerKit account'),
