@@ -72,9 +72,6 @@ export async function addMakerkitRegistry(
 
   registries['@makerkit'] = {
     url: `https://makerkit.dev/r/${variant}`,
-    headers: {
-      Authorization: 'Bearer ${MAKERKIT_REGISTRY_TOKEN}',
-    },
     params: {
       username: githubUsername,
     },

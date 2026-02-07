@@ -40,9 +40,9 @@ export function createAddCommand(parentCommand: Command) {
 
         // 3. Auto-init registry if not configured
         if (!(await isMakerkitRegistryConfigured())) {
-          const initSpinner = ora('Configuring MakerKit registry...').start();
+          console.log(chalk.gray('Configuring MakerKit registry...'));
           await addMakerkitRegistry(variant);
-          initSpinner.succeed('MakerKit registry configured.');
+          console.log(chalk.green('MakerKit registry configured.'));
         }
 
         // 4. Load registry and validate plugin supports this variant
