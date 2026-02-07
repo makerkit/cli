@@ -39,7 +39,6 @@ Commands:
   new                         Initialize a new Makerkit project
   plugins                     List and install plugins.
   i18n                        Manage and translate your i18n files
-  license                     Manage Licenses
   blog                        Manage and generate your blog posts
   help [command]              display help for command
 ```
@@ -111,33 +110,3 @@ To update a plugin, you can use the `plugins update` command:
 ```
 
 This command will prompt you to select a plugin to update. Once selected, the plugin will be updated in your project.
-
-## i18n
-
-The CLI can help you manage your i18n files. 
-
-You can translate from a locale 
-to another (requires an OpenAI key), and verify that your translations are 
-in sync between each other.
-
-### Translating
-
-To translate your i18n files, you can use the `i18n translate` command:
-
-```
-> npx @makerkit/cli@latest i18n translate en es
-```
-
-This command will translate all the keys in your `en/*.json` file to `es/*.
-json`. It will use the OpenAI API to translate the keys. You will need to 
-add a valid OpenAI API key in the `.env.local` file of your Makerkit repository.
-
-### Verifying
-
-To verify that your i18n files are in sync, you can use the `i18n verify` command:
-
-```
-> npx @makerkit/cli@latest i18n verify <base-locale>
-```
-
-If you omit the `base-locale` argument, the command will use `en` as the base.

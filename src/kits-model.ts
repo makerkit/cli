@@ -46,7 +46,7 @@ export const KitsModel = {
       PluginsModel.Umami.id,
       PluginsModel.Signoz.id,
       PluginsModel.Paddle.id,
-      PluginsModel.SupabaseCMS
+      PluginsModel.SupabaseCMS.id
     ],
   },
   RemixSupabaseTurbo: {
