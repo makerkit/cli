@@ -1,17 +1,14 @@
-import { createInstallPluginCommand } from '@/src/commands/plugins/install/install-plugin.command';
+import { createAddCommand } from '@/src/commands/plugins/add/add.command';
+import { createInitCommand } from '@/src/commands/plugins/init/init.command';
 import { createListPluginsCommand } from '@/src/commands/plugins/list/list-plugins.command';
-import { createUpdatePluginCommand } from '@/src/commands/plugins/update/update-plugin.command';
-import { Workspace } from '@/src/utils/workspace';
+import { createScanCommand } from '@/src/commands/plugins/scan/scan.command';
 import { Command } from 'commander';
 
 export const pluginsCommand = new Command()
   .name('plugins')
-  .description('List and install plugins.')
-  .hook('preAction', () => {
-    return Workspace.logWorkspaceInfo();
-  });
+  .description('Manage MakerKit plugins.');
 
-// set children commands
+createInitCommand(pluginsCommand);
+createAddCommand(pluginsCommand);
 createListPluginsCommand(pluginsCommand);
-createInstallPluginCommand(pluginsCommand);
-createUpdatePluginCommand(pluginsCommand);
+createScanCommand(pluginsCommand);

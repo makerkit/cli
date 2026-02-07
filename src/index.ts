@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import { i18nCommand } from '@/src/commands/i18n/i18n.command';
-import { licenseCommand } from '@/src/commands/license/license.command';
 import { newCommand } from '@/src/commands/new/new.command';
 import { pluginsCommand } from '@/src/commands/plugins/plugins.command';
 import { Command } from 'commander';
@@ -21,11 +19,7 @@ async function main() {
     )
     .version('-v, --version', 'display the version number');
 
-  program
-    .addCommand(newCommand)
-    .addCommand(pluginsCommand)
-    .addCommand(i18nCommand)
-    .addCommand(licenseCommand);
+  program.addCommand(newCommand).addCommand(pluginsCommand);
 
   program.parse();
 }
