@@ -3,7 +3,6 @@ import { addMakerkitRegistry } from '@/src/utils/components-json';
 import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import prompts from 'prompts';
 
 export function createInitCommand(parentCommand: Command) {
   return parentCommand
@@ -19,20 +18,7 @@ export function createInitCommand(parentCommand: Command) {
           `Detected project variant: ${chalk.cyan(variant)}\n`,
         );
 
-        const { licenseKey } = await prompts({
-          type: 'text',
-          name: 'licenseKey',
-          message: 'Enter your MakerKit license key:',
-          validate: (value: string) =>
-            value.trim().length > 0 || 'License key is required',
-        });
-
-        if (!licenseKey) {
-          console.log(chalk.yellow('Setup cancelled.'));
-          return;
-        }
-
-        await addMakerkitRegistry(variant, licenseKey.trim());
+        await addMakerkitRegistry(variant);
 
         console.log(
           chalk.green('Registry configured in components.json.\n'),

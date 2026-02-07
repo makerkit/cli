@@ -3,6 +3,10 @@ import {
   getEnvVars,
   isInstalled,
 } from '@/src/plugins-model';
+import {
+  addMakerkitRegistry,
+  isMakerkitRegistryConfigured,
+} from '@/src/utils/components-json';
 import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
 import { runCodemod } from '@/src/utils/run-codemod';
@@ -34,7 +38,14 @@ export function createAddCommand(parentCommand: Command) {
         // 2. Validate project and detect variant
         const { variant } = await validateProject();
 
-        // 3. Load registry and validate plugin supports this variant
+        // 3. Auto-init registry if not configured
+        if (!(await isMakerkitRegistryConfigured())) {
+          const initSpinner = ora('Configuring MakerKit registry...').start();
+          await addMakerkitRegistry(variant);
+          initSpinner.succeed('MakerKit registry configured.');
+        }
+
+        // 4. Load registry and validate plugin supports this variant
         const registry = await PluginRegistry.load();
         const plugin = registry.validatePlugin(pluginId, variant);
 
@@ -102,6 +113,34 @@ export function createAddCommand(parentCommand: Command) {
           console.log(chalk.white('Next steps:'));
           console.log(`  ${chalk.cyan(plugin.postInstallMessage)}\n`);
         }
+
+        // 8. Post-install warnings and tips
+        console.log(chalk.yellow('Important:'));
+        console.log(
+          chalk.yellow(
+            '  This plugin was installed using an automated migration.',
+          ),
+        );
+        console.log(
+          chalk.yellow(
+            '  Please review the changes manually and test thoroughly before committing.',
+          ),
+        );
+        console.log('');
+        console.log(chalk.white('Tips:'));
+        console.log(
+          `  ${chalk.gray('-')} Run ${chalk.cyan('git diff')} to review all changes made by the migration.`,
+        );
+        console.log(
+          `  ${chalk.gray('-')} Use an AI assistant (e.g. Claude) as a first pass to review the diff for issues.`,
+        );
+        console.log(
+          `  ${chalk.gray('-')} Run your test suite and verify the app builds before committing.`,
+        );
+        console.log(
+          `  ${chalk.gray('-')} To undo all changes: ${chalk.cyan('git checkout . && git clean -fd')}`,
+        );
+        console.log('');
       } catch (error) {
         const message =
           error instanceof Error ? error.message : 'Unknown error';

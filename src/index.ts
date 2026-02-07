@@ -17,7 +17,7 @@ async function main() {
     .description(
       'Your SaaS Kit companion. Add plugins, manage migrations, and more.'
     )
-    .version('-v, --version', 'display the version number');
+    .version('2.0.0', '-v, --version', 'display the version number');
 
   program.addCommand(newCommand).addCommand(pluginsCommand);
 

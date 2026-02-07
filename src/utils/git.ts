@@ -11,3 +11,14 @@ export async function getGitRoot(): Promise<string> {
 
   return stdout.trim();
 }
+
+export async function getGitUsername(): Promise<string | undefined> {
+  try {
+    const { stdout } = await execaCommand('git config --get user.username');
+    const username = stdout.trim();
+
+    return username.length > 0 ? username : undefined;
+  } catch {
+    return undefined;
+  }
+}
