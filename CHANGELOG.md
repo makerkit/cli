@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0 - 2026-02-07
+- Added Next.js Drizzle and Prisma kits
+- Removed deprecated commands: `blog`, `i18n`
+- Added new Plugins registry and system with Shadcn CLI and Codemods
+
 ## 1.3.14 - 2025-10-01
 - Added Signoz plugin
 - Added Paddle plugin
