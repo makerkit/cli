@@ -1,9 +1,11 @@
-import { validatePlugin } from '@/src/plugins-model';
+import {
+  PluginRegistry,
+  getEnvVars,
+  isInstalled,
+} from '@/src/plugins-model';
 import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
-import { addPluginToManifest, isPluginInstalled } from '@/src/utils/manifest';
 import { runCodemod } from '@/src/utils/run-codemod';
-import { runShadcnAdd } from '@/src/utils/run-shadcn';
 import { validateProject } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -12,8 +14,8 @@ import ora from 'ora';
 export function createAddCommand(parentCommand: Command) {
   return parentCommand
     .command('add')
-    .argument('<plugin-id>', 'Plugin to install (e.g. feedback, chatbot)')
-    .description('Install a MakerKit plugin via the shadcn registry.')
+    .argument('<plugin-id>', 'Plugin to install (e.g. feedback, waitlist)')
+    .description('Install a MakerKit plugin.')
     .action(async (pluginId: string) => {
       try {
         // 1. Validate git is clean
@@ -29,12 +31,15 @@ export function createAddCommand(parentCommand: Command) {
           process.exit(1);
         }
 
-        // 2. Validate project and plugin
-        const { variant, version } = await validateProject();
-        const plugin = validatePlugin(pluginId);
+        // 2. Validate project and detect variant
+        const { variant } = await validateProject();
 
-        // 3. Check if already installed
-        if (await isPluginInstalled(pluginId)) {
+        // 3. Load registry and validate plugin supports this variant
+        const registry = await PluginRegistry.load();
+        const plugin = registry.validatePlugin(pluginId, variant);
+
+        // 4. Check if already installed via filesystem
+        if (await isInstalled(plugin, variant)) {
           console.error(
             chalk.yellow(
               `Plugin "${plugin.name}" is already installed. Use "plugins list" to see installed plugins.`,
@@ -45,17 +50,17 @@ export function createAddCommand(parentCommand: Command) {
         }
 
         console.log(
-          `\nInstalling ${chalk.cyan(plugin.name)} (${chalk.gray(plugin.id)})...\n`,
+          `\nInstalling ${chalk.cyan(plugin.name)} (${chalk.gray(plugin.id)}) for ${chalk.gray(variant)}...\n`,
         );
 
-        // 4. Run shadcn add
-        const shadcnSpinner = ora('Installing plugin files via shadcn...').start();
-        const shadcnResult = await runShadcnAdd(pluginId);
+        // 5. Run codemod (handles shadcn add + AST transforms)
+        const codemodSpinner = ora('Installing plugin...').start();
+        const codemodResult = await runCodemod(variant, pluginId);
 
-        if (!shadcnResult.success) {
-          shadcnSpinner.fail('Failed to install plugin files.');
+        if (!codemodResult.success) {
+          codemodSpinner.fail('Plugin installation failed.');
 
-          console.error(chalk.red(`\nshadcn add error:\n${shadcnResult.output}`));
+          console.error(chalk.red(`\n${codemodResult.output}`));
           console.log(
             chalk.yellow(
               '\nTo revert changes, run: git checkout . && git clean -fd',
@@ -65,41 +70,26 @@ export function createAddCommand(parentCommand: Command) {
           process.exit(1);
         }
 
-        shadcnSpinner.succeed('Plugin files installed.');
+        codemodSpinner.succeed('Plugin installed.');
 
-        // 5. Run codemod
-        const codemodSpinner = ora('Applying code transforms...').start();
-        const codemodResult = await runCodemod(pluginId);
+        // 6. Add env vars (variant-specific)
+        const envVars = getEnvVars(plugin, variant);
 
-        if (!codemodResult.success) {
-          codemodSpinner.warn('Codemod step failed (may not be available yet).');
-
-          console.log(
-            chalk.yellow(`  ${codemodResult.output}\n`),
-          );
-        } else {
-          codemodSpinner.succeed('Code transforms applied.');
-        }
-
-        // 6. Add env vars
-        if (plugin.envVars.length > 0) {
+        if (envVars.length > 0) {
           const envSpinner = ora('Adding environment variables...').start();
 
-          await appendEnvVars(plugin.envVars, plugin.name);
+          await appendEnvVars(envVars, plugin.name);
 
           envSpinner.succeed('Environment variables added.');
         }
 
-        // 7. Update manifest
-        await addPluginToManifest(pluginId, version, variant);
-
-        // 8. Print summary
+        // 7. Print summary
         console.log(chalk.green(`\n${plugin.name} installed successfully!\n`));
 
-        if (plugin.envVars.length > 0) {
+        if (envVars.length > 0) {
           console.log(chalk.white('Environment variables to configure:'));
 
-          for (const envVar of plugin.envVars) {
+          for (const envVar of envVars) {
             console.log(
               `  ${chalk.cyan(envVar.key)} - ${envVar.description}`,
             );

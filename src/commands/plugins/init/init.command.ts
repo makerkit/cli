@@ -1,6 +1,5 @@
-import { PluginsModel } from '@/src/plugins-model';
+import { PluginRegistry } from '@/src/plugins-model';
 import { addMakerkitRegistry } from '@/src/utils/components-json';
-import { writeManifest } from '@/src/utils/manifest';
 import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -36,18 +35,15 @@ export function createInitCommand(parentCommand: Command) {
         await addMakerkitRegistry(variant, licenseKey.trim());
 
         console.log(
-          chalk.green('Registry configured in components.json.'),
+          chalk.green('Registry configured in components.json.\n'),
         );
 
-        await writeManifest({ plugins: [] });
-
-        console.log(
-          chalk.green('Created .makerkit-plugins.json manifest.\n'),
-        );
+        const registry = await PluginRegistry.load();
+        const plugins = registry.getPluginsForVariant(variant);
 
         console.log(chalk.white('Available plugins:\n'));
 
-        for (const plugin of Object.values(PluginsModel)) {
+        for (const plugin of plugins) {
           console.log(
             `  ${chalk.green(plugin.name)} ${chalk.gray(`(${plugin.id})`)}`,
           );

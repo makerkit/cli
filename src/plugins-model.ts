@@ -1,4 +1,10 @@
+import { join } from 'path';
+
+import fs from 'fs-extra';
 import invariant from 'tiny-invariant';
+
+import { fetchPluginRegistry } from '@/src/utils/plugins-cache';
+import type { Variant } from '@/src/utils/workspace';
 
 export interface EnvVar {
   key: string;
@@ -6,285 +12,236 @@ export interface EnvVar {
   defaultValue?: string;
 }
 
+export interface VariantConfig {
+  envVars: EnvVar[];
+  path?: string;
+}
+
 export interface PluginDefinition {
   name: string;
   id: string;
   description: string;
-  envVars: EnvVar[];
+  variants: Partial<Record<Variant, VariantConfig>>;
   postInstallMessage?: string;
 }
 
-export interface PluginSignature {
-  pluginId: string;
-  directories: string[];
-  keyFiles: string[];
-  configImports: string[];
-  npmDependencies: string[];
-  envVarPrefixes: string[];
-}
-
-export const PluginsModel: Record<string, PluginDefinition> = {
-  chatbot: {
-    name: 'AI Chatbot',
-    id: 'chatbot',
-    description: 'Add an AI Chatbot to your site.',
-    envVars: [
-      {
-        key: 'OPENAI_API_KEY',
-        description: 'OpenAI API Key for the chatbot',
-      },
-    ],
-    postInstallMessage: 'Run database migrations: pnpm db:migrate',
-  },
+const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
   feedback: {
     name: 'Feedback',
     id: 'feedback',
     description: 'Add a feedback popup to your site.',
-    envVars: [],
     postInstallMessage: 'Run database migrations: pnpm db:migrate',
+    variants: {
+      'next-supabase': {
+        envVars: [],
+        path: 'packages/plugins/feedback',
+      },
+    },
   },
   waitlist: {
     name: 'Waitlist',
     id: 'waitlist',
     description: 'Add a waitlist to your site.',
-    envVars: [],
     postInstallMessage: 'Run database migrations: pnpm db:migrate',
+    variants: {
+      'next-supabase': {
+        envVars: [],
+        path: 'packages/plugins/waitlist',
+      },
+    },
   },
   testimonial: {
     name: 'Testimonial',
     id: 'testimonial',
     description: 'Add a testimonial widget to your site.',
-    envVars: [],
     postInstallMessage: 'Run database migrations: pnpm db:migrate',
+    variants: {
+      'next-supabase': {
+        envVars: [],
+        path: 'packages/plugins/testimonial',
+      },
+    },
   },
   roadmap: {
     name: 'Roadmap',
     id: 'roadmap',
     description: 'Add a roadmap to your site.',
-    envVars: [],
     postInstallMessage: 'Run database migrations: pnpm db:migrate',
-  },
-  kanban: {
-    name: 'Kanban',
-    id: 'kanban',
-    description: 'Add a Kanban board to your site.',
-    envVars: [],
-    postInstallMessage: 'Run database migrations: pnpm db:migrate',
-  },
-  'text-editor': {
-    name: 'AI Text Editor',
-    id: 'text-editor',
-    description: 'Add an AI Text Editor to your site.',
-    envVars: [
-      {
-        key: 'OPENAI_API_KEY',
-        description: 'OpenAI API Key for the text editor',
+    variants: {
+      'next-supabase': {
+        envVars: [],
+        path: 'packages/plugins/roadmap',
       },
-    ],
-    postInstallMessage: 'Run database migrations: pnpm db:migrate',
+    },
   },
   'google-analytics': {
     name: 'Google Analytics',
     id: 'google-analytics',
     description: 'Add Google Analytics to your site.',
-    envVars: [
-      {
-        key: 'NEXT_PUBLIC_GOOGLE_ANALYTICS_ID',
-        description: 'Google Analytics Measurement ID',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_GOOGLE_ANALYTICS_ID',
+            description: 'Google Analytics Measurement ID',
+          },
+        ],
+        path: 'packages/plugins/analytics/google-analytics',
       },
-    ],
+    },
   },
   posthog: {
     name: 'PostHog',
     id: 'posthog',
     description: 'Add PostHog Analytics to your site.',
-    envVars: [
-      {
-        key: 'NEXT_PUBLIC_POSTHOG_KEY',
-        description: 'PostHog project API key',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_KEY',
+            description: 'PostHog project API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_POSTHOG_HOST',
+            description: 'PostHog host URL',
+            defaultValue: 'https://app.posthog.com',
+          },
+        ],
+        path: 'packages/plugins/analytics/posthog',
       },
-      {
-        key: 'NEXT_PUBLIC_POSTHOG_HOST',
-        description: 'PostHog host URL',
-        defaultValue: 'https://app.posthog.com',
-      },
-    ],
+    },
   },
   umami: {
     name: 'Umami',
     id: 'umami',
     description: 'Add Umami Analytics to your site.',
-    envVars: [
-      {
-        key: 'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
-        description: 'Umami website ID',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_UMAMI_WEBSITE_ID',
+            description: 'Umami website ID',
+          },
+          {
+            key: 'NEXT_PUBLIC_UMAMI_HOST',
+            description: 'Umami host URL',
+          },
+        ],
+        path: 'packages/plugins/analytics/umami',
       },
-      {
-        key: 'NEXT_PUBLIC_UMAMI_HOST',
-        description: 'Umami host URL',
-      },
-    ],
+    },
   },
   signoz: {
     name: 'SigNoz',
     id: 'signoz',
     description: 'Add SigNoz Monitoring to your app.',
-    envVars: [
-      {
-        key: 'OTEL_EXPORTER_OTLP_ENDPOINT',
-        description: 'SigNoz OTLP endpoint URL',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'OTEL_EXPORTER_OTLP_ENDPOINT',
+            description: 'SigNoz OTLP endpoint URL',
+          },
+        ],
+        path: 'packages/plugins/signoz',
       },
-    ],
+    },
   },
   paddle: {
     name: 'Paddle',
     id: 'paddle',
     description: 'Add Paddle Billing to your app.',
-    envVars: [
-      {
-        key: 'NEXT_PUBLIC_PADDLE_CLIENT_TOKEN',
-        description: 'Paddle client-side token',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_PADDLE_CLIENT_TOKEN',
+            description: 'Paddle client-side token',
+          },
+          {
+            key: 'PADDLE_API_KEY',
+            description: 'Paddle API key',
+          },
+          {
+            key: 'PADDLE_WEBHOOK_SECRET',
+            description: 'Paddle webhook secret',
+          },
+        ],
+        path: 'packages/plugins/paddle',
       },
-      {
-        key: 'PADDLE_API_KEY',
-        description: 'Paddle API key',
-      },
-      {
-        key: 'PADDLE_WEBHOOK_SECRET',
-        description: 'Paddle webhook secret',
-      },
-    ],
+    },
   },
   'supabase-cms': {
     name: 'Supabase CMS',
     id: 'supabase-cms',
     description: 'Add Supabase CMS provider to your app.',
-    envVars: [],
     postInstallMessage: 'Run database migrations: pnpm db:migrate',
+    variants: {
+      'next-supabase': {
+        envVars: [],
+        path: 'packages/plugins/supabase-cms',
+      },
+    },
   },
 };
 
-export const PluginSignatures: PluginSignature[] = [
-  {
-    pluginId: 'chatbot',
-    directories: ['packages/plugins/chatbot'],
-    keyFiles: ['packages/plugins/chatbot/package.json'],
-    configImports: ['@kit/chatbot'],
-    npmDependencies: ['@kit/chatbot'],
-    envVarPrefixes: ['OPENAI_API_KEY'],
-  },
-  {
-    pluginId: 'feedback',
-    directories: ['packages/plugins/feedback'],
-    keyFiles: ['packages/plugins/feedback/package.json'],
-    configImports: ['@kit/feedback'],
-    npmDependencies: ['@kit/feedback'],
-    envVarPrefixes: [],
-  },
-  {
-    pluginId: 'waitlist',
-    directories: ['packages/plugins/waitlist'],
-    keyFiles: ['packages/plugins/waitlist/package.json'],
-    configImports: ['@kit/waitlist'],
-    npmDependencies: ['@kit/waitlist'],
-    envVarPrefixes: [],
-  },
-  {
-    pluginId: 'testimonial',
-    directories: ['packages/plugins/testimonial'],
-    keyFiles: ['packages/plugins/testimonial/package.json'],
-    configImports: ['@kit/testimonial'],
-    npmDependencies: ['@kit/testimonial'],
-    envVarPrefixes: [],
-  },
-  {
-    pluginId: 'roadmap',
-    directories: ['packages/plugins/roadmap'],
-    keyFiles: ['packages/plugins/roadmap/package.json'],
-    configImports: ['@kit/roadmap'],
-    npmDependencies: ['@kit/roadmap'],
-    envVarPrefixes: [],
-  },
-  {
-    pluginId: 'kanban',
-    directories: ['packages/plugins/kanban'],
-    keyFiles: ['packages/plugins/kanban/package.json'],
-    configImports: ['@kit/kanban'],
-    npmDependencies: ['@kit/kanban'],
-    envVarPrefixes: [],
-  },
-  {
-    pluginId: 'text-editor',
-    directories: ['packages/plugins/text-editor'],
-    keyFiles: ['packages/plugins/text-editor/package.json'],
-    configImports: ['@kit/text-editor'],
-    npmDependencies: ['@kit/text-editor'],
-    envVarPrefixes: ['OPENAI_API_KEY'],
-  },
-  {
-    pluginId: 'google-analytics',
-    directories: ['packages/plugins/analytics/google-analytics'],
-    keyFiles: ['packages/plugins/analytics/google-analytics/package.json'],
-    configImports: ['@kit/google-analytics'],
-    npmDependencies: ['@kit/google-analytics'],
-    envVarPrefixes: ['NEXT_PUBLIC_GOOGLE_ANALYTICS'],
-  },
-  {
-    pluginId: 'posthog',
-    directories: ['packages/plugins/analytics/posthog'],
-    keyFiles: ['packages/plugins/analytics/posthog/package.json'],
-    configImports: ['@kit/posthog'],
-    npmDependencies: ['@kit/posthog'],
-    envVarPrefixes: ['NEXT_PUBLIC_POSTHOG'],
-  },
-  {
-    pluginId: 'umami',
-    directories: ['packages/plugins/analytics/umami'],
-    keyFiles: ['packages/plugins/analytics/umami/package.json'],
-    configImports: ['@kit/umami'],
-    npmDependencies: ['@kit/umami'],
-    envVarPrefixes: ['NEXT_PUBLIC_UMAMI'],
-  },
-  {
-    pluginId: 'signoz',
-    directories: ['packages/plugins/signoz'],
-    keyFiles: ['packages/plugins/signoz/package.json'],
-    configImports: ['@kit/signoz'],
-    npmDependencies: ['@kit/signoz'],
-    envVarPrefixes: ['OTEL_EXPORTER'],
-  },
-  {
-    pluginId: 'paddle',
-    directories: ['packages/plugins/paddle'],
-    keyFiles: ['packages/plugins/paddle/package.json'],
-    configImports: ['@kit/paddle'],
-    npmDependencies: ['@kit/paddle'],
-    envVarPrefixes: ['PADDLE_', 'NEXT_PUBLIC_PADDLE'],
-  },
-  {
-    pluginId: 'supabase-cms',
-    directories: ['packages/plugins/supabase-cms'],
-    keyFiles: ['packages/plugins/supabase-cms/package.json'],
-    configImports: ['@kit/supabase-cms'],
-    npmDependencies: ['@kit/supabase-cms'],
-    envVarPrefixes: [],
-  },
-];
+export class PluginRegistry {
+  private constructor(
+    private plugins: Record<string, PluginDefinition>,
+  ) {}
 
-export function getPluginById(id: string): PluginDefinition | undefined {
-  return PluginsModel[id];
+  static async load(): Promise<PluginRegistry> {
+    const registryUrl = process.env.MAKERKIT_PLUGINS_REGISTRY_URL;
+    const plugins = await fetchPluginRegistry(registryUrl, DEFAULT_PLUGINS);
+
+    return new PluginRegistry(plugins);
+  }
+
+  getPluginById(id: string): PluginDefinition | undefined {
+    return this.plugins[id];
+  }
+
+  getPluginsForVariant(variant: Variant): PluginDefinition[] {
+    return Object.values(this.plugins).filter((p) => variant in p.variants);
+  }
+
+  validatePlugin(pluginId: string, variant: Variant): PluginDefinition {
+    const plugin = this.getPluginById(pluginId);
+
+    invariant(plugin, `Plugin "${pluginId}" not found`);
+
+    invariant(
+      plugin.variants[variant],
+      `Plugin "${pluginId}" is not available for the ${variant} variant`,
+    );
+
+    return plugin;
+  }
 }
 
-export function validatePlugin(pluginId: string): PluginDefinition {
-  const plugin = getPluginById(pluginId);
-
-  invariant(plugin, `Plugin "${pluginId}" not found`);
-
-  return plugin;
+export function getEnvVars(
+  plugin: PluginDefinition,
+  variant: Variant,
+): EnvVar[] {
+  return plugin.variants[variant]?.envVars ?? [];
 }
 
-export function getPluginSignature(
-  pluginId: string,
-): PluginSignature | undefined {
-  return PluginSignatures.find((s) => s.pluginId === pluginId);
+export function getPath(
+  plugin: PluginDefinition,
+  variant: Variant,
+): string | undefined {
+  return plugin.variants[variant]?.path;
+}
+
+export async function isInstalled(
+  plugin: PluginDefinition,
+  variant: Variant,
+): Promise<boolean> {
+  const pluginPath = getPath(plugin, variant);
+
+  if (!pluginPath) {
+    return false;
+  }
+
+  return fs.pathExists(join(process.cwd(), pluginPath));
 }

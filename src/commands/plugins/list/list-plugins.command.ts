@@ -1,5 +1,5 @@
-import { PluginsModel } from '@/src/plugins-model';
-import { readManifest } from '@/src/utils/manifest';
+import { PluginRegistry, isInstalled } from '@/src/plugins-model';
+import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
 
@@ -8,35 +8,35 @@ export function createListPluginsCommand(parentCommand: Command) {
     .command('list')
     .description('List available and installed plugins.')
     .action(async () => {
-      const manifest = await readManifest();
-      const installedMap = new Map(
-        manifest.plugins.map((p) => [p.pluginId, p]),
+      const variant = await detectVariant();
+      const registry = await PluginRegistry.load();
+      const plugins = registry.getPluginsForVariant(variant);
+
+      console.log(
+        chalk.white(`MakerKit Plugins ${chalk.gray(`(${variant})`)}\n`),
       );
 
-      const plugins = Object.values(PluginsModel);
-
-      console.log(chalk.white('MakerKit Plugins\n'));
       console.log(
         `  ${chalk.green('Plugin Name')} ${chalk.gray('(plugin-id)')} — Status\n`,
       );
 
+      let installedCount = 0;
+
       for (const plugin of plugins) {
-        const installed = installedMap.get(plugin.id);
+        const installed = await isInstalled(plugin, variant);
+
+        if (installed) {
+          installedCount++;
+        }
 
         const status = installed
-          ? chalk.green(`installed`) +
-            (installed.version !== 'unknown'
-              ? chalk.gray(` v${installed.version}`)
-              : '') +
-            (installed.source ? chalk.gray(` [${installed.source}]`) : '')
+          ? chalk.green('installed')
           : chalk.gray('available');
 
         console.log(
           `  ${chalk.cyan(plugin.name)} ${chalk.gray(`(${plugin.id})`)} — ${status}`,
         );
       }
-
-      const installedCount = manifest.plugins.length;
 
       console.log(
         `\n  ${chalk.white(`${installedCount} installed`)} / ${chalk.gray(`${plugins.length} available`)}\n`,

@@ -1,12 +1,18 @@
 import { execaCommand } from 'execa';
 
 export async function runCodemod(
+  variant: string,
   pluginId: string,
 ): Promise<{ success: boolean; output: string }> {
   try {
-    const { stdout, stderr } = await execaCommand(
-      `npx codemod @makerkit/add-${pluginId}`,
-    );
+    const localPath = process.env.MAKERKIT_CODEMODS_PATH;
+    const runner = process.env.MAKERKIT_PACKAGE_RUNNER ?? 'npx';
+
+    const command = localPath
+      ? `${runner} codemod workflow run -w ${localPath}/codemods/${variant}/${pluginId}`
+      : `${runner} codemod @makerkit/${variant}-${pluginId}`;
+
+    const { stdout, stderr } = await execaCommand(command);
 
     return {
       success: true,
