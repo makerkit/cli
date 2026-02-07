@@ -49,6 +49,18 @@ export const KitsModel = {
       PluginsModel.SupabaseCMS.id
     ],
   },
+  NextJsDrizzle: {
+    name: `Next.js Drizzle`,
+    id: `next-drizzle`,
+    repository: `git@github.com:makerkit/next-drizzle-saas-kit-turbo`,
+    plugins: [],
+  },
+  NextJsPrisma: {
+    name: `Next.js Prisma`,
+    id: `next-prisma`,
+    repository: `git@github.com:makerkit/next-prisma-saas-kit-turbo`,
+    plugins: [],
+  },
   RemixSupabaseTurbo: {
     name: `Remix Supabase Turbo`,
     id: `remix-supabase-turbo`,

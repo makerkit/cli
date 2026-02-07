@@ -14,6 +14,12 @@ You can run commands using `npx`:
 npx @makerkit/cli@latest <command>
 ```
 
+If you use PNPM, use:
+
+```
+pnpm dlx @makerkit/cli@latest <command>
+```
+
 This ensures that you always run the latest version of the CLI.
 
 ### Some commands require a Makerkit repository
@@ -38,29 +44,8 @@ Options:
 Commands:
   new                         Initialize a new Makerkit project
   plugins                     List and install plugins.
-  i18n                        Manage and translate your i18n files
-  blog                        Manage and generate your blog posts
   help [command]              display help for command
 ```
-
-### Adding an OpenAI Key (optional)
-
-To use the generative AI features of the CLI, you will need to add an OpenAI 
-key. 
-
-To do so, create a `.env.local` file if it does not exist yet, and add the
-following environment variable:
-
-```
-OPENAI_API_KEY=<your-key>
-```
-
-This key will be used to generate the prompts for your blog posts. It
-remains locally on your computer and is not shared with anyone.
-
-At the moment of writing, the CLI only uses the OpenAI API to generate:
-1. Translations for your i18n files
-2. Blog Posts
 
 ## Creating a new Makerkit project
 
@@ -100,13 +85,3 @@ To install a plugin, you can use the `plugins install` command:
 ```
 
 This command will prompt you to select a plugin to install. Once selected, the plugin will be installed in your project.
-
-### Updating plugins
-
-To update a plugin, you can use the `plugins update` command:
-
-```
-> npx @makerkit/cli@latest plugins update
-```
-
-This command will prompt you to select a plugin to update. Once selected, the plugin will be updated in your project.
