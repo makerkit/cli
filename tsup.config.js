@@ -1,11 +1,21 @@
 import { defineConfig } from 'tsup';
 
-export default defineConfig({
-  clean: true,
-  dts: true,
-  entry: ['src/index.ts'],
-  format: ['esm'],
-  sourcemap: true,
-  target: 'esnext',
-  outDir: 'dist',
-});
+export default defineConfig([
+  {
+    clean: true,
+    dts: true,
+    entry: ['src/index.ts'],
+    format: ['esm'],
+    sourcemap: true,
+    target: 'esnext',
+    outDir: 'dist',
+  },
+  {
+    dts: false,
+    entry: ['src/mcp.ts'],
+    format: ['esm'],
+    sourcemap: true,
+    target: 'esnext',
+    outDir: 'dist',
+  },
+]);

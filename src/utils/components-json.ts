@@ -1,56 +1,36 @@
 import { join } from 'path';
+import { tmpdir } from 'os';
 
 import fs from 'fs-extra';
 import prompts from 'prompts';
 
 import { getGitUsername } from '@/src/utils/git';
 
-function getComponentsJsonPath(): string {
-  return join(process.cwd(), 'components.json');
-}
+const USERNAME_FILE = join(tmpdir(), 'makerkit-username');
 
-export async function readComponentsJson(): Promise<Record<string, unknown>> {
-  const filePath = getComponentsJsonPath();
+export function getCachedUsername(): string | undefined {
+  try {
+    const username = fs.readFileSync(USERNAME_FILE, 'utf-8').trim();
 
-  if (!(await fs.pathExists(filePath))) {
-    throw new Error(
-      'components.json not found. Make sure you are in a MakerKit project root.',
-    );
+    return username.length > 0 ? username : undefined;
+  } catch {
+    return undefined;
   }
-
-  return fs.readJson(filePath);
 }
 
-export async function writeComponentsJson(
-  config: Record<string, unknown>,
-): Promise<void> {
-  const filePath = getComponentsJsonPath();
-
-  await fs.writeJson(filePath, config, { spaces: 2 });
+export function cacheUsername(username: string): void {
+  fs.writeFileSync(USERNAME_FILE, username, 'utf-8');
 }
 
-export async function isMakerkitRegistryConfigured(): Promise<boolean> {
-  const filePath = getComponentsJsonPath();
-
-  if (!(await fs.pathExists(filePath))) {
-    return false;
+export function clearCachedUsername(): void {
+  try {
+    fs.removeSync(USERNAME_FILE);
+  } catch {
+    // ignore
   }
-
-  const config = await fs.readJson(filePath);
-  const registries = config.registries as Record<string, unknown> | undefined;
-
-  return !!registries?.['@makerkit'];
 }
 
-export async function addMakerkitRegistry(
-  variant: string,
-): Promise<void> {
-  const filePath = getComponentsJsonPath();
-  const config = (await fs.pathExists(filePath))
-    ? await fs.readJson(filePath)
-    : {};
-
-  const registries = (config.registries ?? {}) as Record<string, unknown>;
+export async function promptForUsername(): Promise<string> {
   const gitUsername = await getGitUsername();
 
   const response = await prompts({
@@ -64,20 +44,33 @@ export async function addMakerkitRegistry(
     },
   });
 
-  const githubUsername = (response.githubUsername as string | undefined)?.trim();
+  const username = (response.githubUsername as string | undefined)?.trim();
 
-  if (!githubUsername) {
-    throw new Error('Registry setup cancelled. GitHub username is required.');
+  if (!username) {
+    throw new Error('Setup cancelled. GitHub username is required.');
   }
 
-  registries['@makerkit'] = {
-    url: `https://makerkit.dev/r/${variant}`,
-    params: {
-      username: githubUsername,
-    },
-  };
+  cacheUsername(username);
 
-  config.registries = registries;
+  return username;
+}
 
-  await writeComponentsJson(config);
+export async function getOrPromptUsername(
+  providedUsername?: string,
+): Promise<string> {
+  if (providedUsername?.trim()) {
+    const username = providedUsername.trim();
+
+    cacheUsername(username);
+
+    return username;
+  }
+
+  const cached = getCachedUsername();
+
+  if (cached) {
+    return cached;
+  }
+
+  return promptForUsername();
 }

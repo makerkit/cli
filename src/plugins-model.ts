@@ -243,5 +243,17 @@ export async function isInstalled(
     return false;
   }
 
-  return fs.pathExists(join(process.cwd(), pluginPath));
+  const pkgJsonPath = join(process.cwd(), pluginPath, 'package.json');
+
+  if (!(await fs.pathExists(pkgJsonPath))) {
+    return false;
+  }
+
+  try {
+    const pkg = await fs.readJson(pkgJsonPath);
+
+    return !!pkg.name && !!pkg.exports;
+  } catch {
+    return false;
+  }
 }

@@ -1,5 +1,5 @@
 import { PluginRegistry } from '@/src/plugins-model';
-import { addMakerkitRegistry } from '@/src/utils/components-json';
+import { getOrPromptUsername } from '@/src/utils/components-json';
 import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -18,11 +18,9 @@ export function createInitCommand(parentCommand: Command) {
           `Detected project variant: ${chalk.cyan(variant)}\n`,
         );
 
-        await addMakerkitRegistry(variant);
+        await getOrPromptUsername();
 
-        console.log(
-          chalk.green('Registry configured in components.json.\n'),
-        );
+        console.log(chalk.green('Registry configured.\n'));
 
         const registry = await PluginRegistry.load();
         const plugins = registry.getPluginsForVariant(variant);

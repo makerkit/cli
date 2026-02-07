@@ -4,11 +4,12 @@ import {
   isInstalled,
 } from '@/src/plugins-model';
 import {
-  addMakerkitRegistry,
-  isMakerkitRegistryConfigured,
+  clearCachedUsername,
+  getOrPromptUsername,
 } from '@/src/utils/components-json';
 import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
+import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { runCodemod } from '@/src/utils/run-codemod';
 import { validateProject } from '@/src/utils/workspace';
 import chalk from 'chalk';
@@ -38,14 +39,7 @@ export function createAddCommand(parentCommand: Command) {
         // 2. Validate project and detect variant
         const { variant } = await validateProject();
 
-        // 3. Auto-init registry if not configured
-        if (!(await isMakerkitRegistryConfigured())) {
-          console.log(chalk.gray('Configuring MakerKit registry...'));
-          await addMakerkitRegistry(variant);
-          console.log(chalk.green('MakerKit registry configured.'));
-        }
-
-        // 4. Load registry and validate plugin supports this variant
+        // 3. Load registry and validate plugin supports this variant
         const registry = await PluginRegistry.load();
         const plugin = registry.validatePlugin(pluginId, variant);
 
@@ -64,14 +58,40 @@ export function createAddCommand(parentCommand: Command) {
           `\nInstalling ${chalk.cyan(plugin.name)} (${chalk.gray(plugin.id)}) for ${chalk.gray(variant)}...\n`,
         );
 
-        // 5. Run codemod (handles shadcn add + AST transforms)
-        const codemodSpinner = ora('Installing plugin...').start();
+        // 5. Fetch and write plugin files from registry
+        const username = await getOrPromptUsername();
+
+        const filesSpinner = ora('Installing plugin files...').start();
+
+        try {
+          await installRegistryFiles(variant, pluginId, username);
+        } catch (error) {
+          filesSpinner.fail('Failed to install plugin files.');
+
+          clearCachedUsername();
+
+          console.log(
+            chalk.yellow('\nRetrying with a different username...\n'),
+          );
+
+          const retryUsername = await getOrPromptUsername();
+
+          const retrySpinner = ora('Installing plugin files...').start();
+          await installRegistryFiles(variant, pluginId, retryUsername);
+          retrySpinner.succeed('Plugin files installed.');
+        }
+
+        if (filesSpinner.isSpinning) {
+          filesSpinner.succeed('Plugin files installed.');
+        }
+
+        // 6. Run codemod (AST transforms + workspace deps)
+        console.log(chalk.gray('\nRunning plugin codemod...\n'));
         const codemodResult = await runCodemod(variant, pluginId);
 
         if (!codemodResult.success) {
-          codemodSpinner.fail('Plugin installation failed.');
-
-          console.error(chalk.red(`\n${codemodResult.output}`));
+          console.error(chalk.red(`\nPlugin installation failed.`));
+          console.error(chalk.red(codemodResult.output));
           console.log(
             chalk.yellow(
               '\nTo revert changes, run: git checkout . && git clean -fd',
@@ -81,9 +101,9 @@ export function createAddCommand(parentCommand: Command) {
           process.exit(1);
         }
 
-        codemodSpinner.succeed('Plugin installed.');
+        console.log(chalk.green('\nPlugin installed.'));
 
-        // 6. Add env vars (variant-specific)
+        // 7. Add env vars (variant-specific)
         const envVars = getEnvVars(plugin, variant);
 
         if (envVars.length > 0) {
@@ -94,7 +114,7 @@ export function createAddCommand(parentCommand: Command) {
           envSpinner.succeed('Environment variables added.');
         }
 
-        // 7. Print summary
+        // 8. Print summary
         console.log(chalk.green(`\n${plugin.name} installed successfully!\n`));
 
         if (envVars.length > 0) {
@@ -114,7 +134,7 @@ export function createAddCommand(parentCommand: Command) {
           console.log(`  ${chalk.cyan(plugin.postInstallMessage)}\n`);
         }
 
-        // 8. Post-install warnings and tips
+        // 9. Post-install warnings and tips
         console.log(chalk.yellow('Important:'));
         console.log(
           chalk.yellow(

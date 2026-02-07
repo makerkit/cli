@@ -9,7 +9,8 @@
     "access": "public"
   },
   "bin": {
-    "makerkit": "./dist/index.js"
+    "makerkit": "./dist/index.js",
+    "makerkit-mcp": "./dist/mcp.js"
   },
   "repository": {
     "url": "https://github.com/makerkit/cli.git"
@@ -35,7 +36,8 @@
     "ora": "9.3.0",
     "prompts": "2.4.2",
     "tiny-invariant": "1.3.3",
-    "zod": "4.3.6"
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.7.1",
