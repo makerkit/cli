@@ -3,9 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 ## 2.0.0 - 2026-02-07
-- Added Next.js Drizzle and Prisma kits
-- Removed deprecated commands: `blog`, `i18n`
-- Added new Plugins registry and system with Shadcn CLI and Codemods
+
+Complete rewrite of the plugin system. Replaced git subtree distribution with a registry-based architecture using shadcn's JSON format and AST-powered codemods.
+
+### New plugin commands
+- `plugins add [id...]` - Install one or more plugins (interactive multi-select when no arguments given)
+- `plugins update [id...]` - Update installed plugins with confirmation before overwriting modified files
+- `plugins outdated` - Check which installed plugins have newer versions available
+- `plugins diff [id]` - Show a colored unified diff between local files and the latest registry version
+- `plugins init` - Configure GitHub username for registry access
+- `plugins list` - List available and installed plugins with filesystem-based detection
+
+### Architecture changes
+- Built custom file download orchestrator (shadcn CLI doesn't support nested file paths)
+- Plugin catalog fetched from remote registry with 1-hour local cache and bundled fallback
+- Variant auto-detection from `package.json` dependencies (Next.js Supabase, Drizzle, Prisma, React Router)
+- Filesystem-based installation detection (no manifest file needed)
+- Clean git state enforcement with `git checkout . && git clean -fd` rollback
+- Registry authentication via GitHub organization membership
+
+### Other changes
+- Added Next.js Drizzle and Prisma kits to `new` command
+- Removed deprecated commands: `blog`, `i18n`, `license`
+- Removed legacy git subtree install/update/service commands
 
 ## 1.3.14 - 2025-10-01
 - Added Signoz plugin
