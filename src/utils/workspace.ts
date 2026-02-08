@@ -1,84 +1,87 @@
 import { join } from 'path';
-import { KitsModel } from '@/src/kits-model';
-import chalk from 'chalk';
+
 import fs from 'fs-extra';
 
-export class Workspace {
-  static async getKitMeta() {
-    const packageJson = await getPackageJson();
-    const kit = await detectKitVersion();
+export type Variant =
+  | 'next-supabase'
+  | 'next-drizzle'
+  | 'next-prisma'
+  | 'react-router-supabase';
 
-    return {
-      ...kit,
-      version: packageJson.version ?? 'unknown',
-    };
+async function readDeps(
+  pkgPath: string,
+): Promise<Record<string, string>> {
+  if (!(await fs.pathExists(pkgPath))) {
+    return {};
   }
 
-  static async logWorkspaceInfo() {
-    const meta = await Workspace.getKitMeta();
+  const pkg = await fs.readJson(pkgPath);
 
-    console.log(
-      `Makerkit version: ${chalk.cyan(meta.name)} - ${chalk.cyan(
-        meta.version ?? 'unknown'
-      )}.\n`
-    );
-  }
+  return {
+    ...pkg.dependencies,
+    ...pkg.devDependencies,
+  };
 }
 
-async function detectKitVersion() {
-  let packageJson = await getPackageJson();
+export async function detectVariant(): Promise<Variant> {
+  const cwd = process.cwd();
 
-  if (!packageJson) {
+  const rootPkgPath = join(cwd, 'package.json');
+
+  if (!(await fs.pathExists(rootPkgPath))) {
     throw new Error(
-      'No package.json found. Please run this command in a Makerkit workspace.'
+      'No package.json found. Please run this command from a MakerKit project root.',
     );
   }
 
-  let deps = Object.keys(packageJson.dependencies ?? []);
+  const rootDeps = await readDeps(rootPkgPath);
 
-  if (deps.length === 0) {
-    deps = Object.keys(packageJson.devDependencies ?? []);
-  }
-
-  if (deps.includes('turbo')) {
-    // locate apps/web
-    packageJson = await fs.readJSON(
-      join(process.cwd(), 'apps/web/package.json')
+  if (!rootDeps['turbo']) {
+    throw new Error(
+      'This does not appear to be a MakerKit Turbo monorepo. The "turbo" dependency was not found in package.json.',
     );
-
-    deps = Object.keys(packageJson.dependencies ?? []);
-
-    if (deps.includes('next')) {
-      return KitsModel.NextJsSupabaseTurbo;
-    }
-
-    if (deps.includes('@remix-run/react')) {
-      return KitsModel.RemixSupabaseTurbo;
-    }
   }
 
-  if (deps.includes('next') && deps.includes('firebase')) {
-    return KitsModel.NextJsFirebase;
+  const webDeps = await readDeps(join(cwd, 'apps', 'web', 'package.json'));
+  const dbDeps = await readDeps(
+    join(cwd, 'packages', 'database', 'package.json'),
+  );
+
+  const hasSupabase = !!webDeps['@supabase/supabase-js'];
+  const hasReactRouter = !!webDeps['@react-router/node'];
+  const hasDrizzle = !!webDeps['drizzle-orm'] || !!dbDeps['drizzle-orm'];
+  const hasPrisma = !!webDeps['@prisma/client'] || !!dbDeps['@prisma/client'];
+
+  if (hasReactRouter && hasSupabase) {
+    return 'react-router-supabase';
   }
 
-  if (deps.includes('next') && deps.includes('@supabase/supabase-js')) {
-    return KitsModel.NextJsSupabase;
+  if (hasSupabase) {
+    return 'next-supabase';
   }
 
-  if (
-    deps.includes('@remix-run/react') &&
-    deps.includes('@supabase/supabase-js')
-  ) {
-    return KitsModel.RemixSupabase;
+  if (hasDrizzle) {
+    return 'next-drizzle';
+  }
+
+  if (hasPrisma) {
+    return 'next-prisma';
   }
 
   throw new Error(
-    'Could not detect Makerkit workspace. Please run this command in a Makerkit workspace.'
+    'Unrecognized MakerKit project. Could not detect variant from dependencies.',
   );
 }
 
-async function getPackageJson(): Promise<Record<string, unknown>> {
-  return fs
-    .readJSON(join(process.cwd(), 'package.json'))
-    .catch(() => undefined);
+export async function validateProject(): Promise<{
+  variant: Variant;
+  version: string;
+}> {
+  const variant = await detectVariant();
+  const rootPkg = await fs.readJson(join(process.cwd(), 'package.json'));
+
+  return {
+    variant,
+    version: rootPkg.version ?? 'unknown',
+  };
 }
