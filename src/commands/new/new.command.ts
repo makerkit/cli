@@ -1,53 +1,19 @@
-import { join } from 'path';
-
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { execa } from 'execa';
-import invariant from 'tiny-invariant';
 import ora from 'ora';
 import prompts from 'prompts';
 
-const Kits = [
-  {
-    name: 'Next.js Supabase',
-    id: 'next-supabase-turbo',
-    repository: 'git@github.com:makerkit/next-supabase-saas-kit-turbo',
-  },
-  {
-    name: 'Next.js Drizzle',
-    id: 'next-drizzle',
-    repository: 'git@github.com:makerkit/next-drizzle-saas-kit-turbo',
-  },
-  {
-    name: 'Next.js Prisma',
-    id: 'next-prisma',
-    repository: 'git@github.com:makerkit/next-prisma-saas-kit-turbo',
-  },
-  {
-    name: 'React Router Supabase',
-    id: 'react-router-supabase-turbo',
-    repository: 'git@github.com:makerkit/react-router-supabase-saas-kit-turbo',
-  },
-];
-
-function getKitById(id: string) {
-  const kit = Kits.find((k) => k.id === id);
-
-  invariant(kit, `Kit "${id}" not found`);
-
-  return kit;
-}
+import { createProject } from '@/src/utils/create-project';
+import { VARIANT_CATALOG } from '@/src/utils/list-variants';
 
 export const newCommand = new Command()
   .name('new')
   .description('Initialize a new Makerkit project')
   .action(async () => {
-    const choices = Kits.map((kit) => {
-      return {
-        title: kit.name,
-        value: kit.id,
-      };
-    });
+    const choices = VARIANT_CATALOG.map((v) => ({
+      title: v.name,
+      value: v.id,
+    }));
 
     const { kit, name: projectName } = await prompts([
       {
@@ -63,14 +29,19 @@ export const newCommand = new Command()
       },
     ]);
 
-    const { repository, name: kitName } = getKitById(kit);
+    const selected = VARIANT_CATALOG.find((v) => v.id === kit);
+
+    if (!selected) {
+      console.log('Invalid kit selection. Aborting...');
+      process.exit(1);
+    }
 
     const { confirm } = await prompts([
       {
         type: 'confirm',
         name: 'confirm',
         message: `Are you sure you want to clone ${chalk.cyan(
-          kitName
+          selected.name
         )} to ${chalk.cyan(projectName)}?`,
       },
     ]);
@@ -80,48 +51,23 @@ export const newCommand = new Command()
       process.exit(0);
     }
 
-    // pull repository from github
-    await pullFromGithub(repository, kitName, projectName);
+    const spinner = ora(`Cloning ${selected.name}...`).start();
 
-    // install dependencies
-    await installDependencies(projectName);
+    try {
+      const result = await createProject({
+        variant: selected.id,
+        name: projectName,
+        directory: process.cwd(),
+      });
+
+      spinner.succeed(`${result.message}`);
+
+      console.log(
+        `You can now get started. Open the project in your IDE and read the README.md file for more information.`
+      );
+    } catch (e) {
+      console.error(e);
+      spinner.fail(`Failed to create project`);
+      process.exit(1);
+    }
   });
-
-async function pullFromGithub(
-  repository: string,
-  kit: string,
-  projectName: string
-) {
-  const spinner = ora(`Cloning ${kit}...`).start();
-
-  try {
-    await execa('git', ['clone', repository, projectName]);
-
-    spinner.succeed(`Cloned ${kit} to ${projectName}...`);
-  } catch (e) {
-    console.error(e);
-    spinner.fail(`Failed to clone ${kit}`);
-
-    return Promise.reject(`Failed to clone ${kit}`);
-  }
-}
-
-async function installDependencies(projectName: string) {
-  const cwd = join(process.cwd(), projectName);
-  const spinner = ora(`Installing dependencies. Please wait...`).start();
-
-  try {
-    await execa('npm', ['install'], { cwd });
-
-    spinner.succeed(`Dependencies successfully installed!`);
-
-    console.log(
-      `You can now get started. Open the project in your IDE and read the README.md file for more information.`
-    );
-  } catch (e) {
-    console.error(e);
-    spinner.fail(`Failed to install dependencies`);
-
-    return Promise.reject(`Failed to install dependencies`);
-  }
-}
