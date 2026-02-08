@@ -2,7 +2,7 @@ import type { Variant } from '@/src/utils/workspace';
 
 import { execaCommand } from 'execa';
 
-const VARIANT_REPO_MAP: Record<Variant, string> = {
+export const VARIANT_REPO_MAP: Record<Variant, string> = {
   'next-supabase': 'makerkit/next-supabase-saas-kit-turbo',
   'next-drizzle': 'makerkit/next-drizzle-saas-kit-turbo',
   'next-prisma': 'makerkit/next-prisma-saas-kit-turbo',

@@ -1,5 +1,4 @@
-import { PluginRegistry, isInstalled } from '@/src/plugins-model';
-import { detectVariant } from '@/src/utils/workspace';
+import { listPlugins } from '@/src/utils/list-plugins';
 import chalk from 'chalk';
 import { Command } from 'commander';
 
@@ -8,12 +7,10 @@ export function createListPluginsCommand(parentCommand: Command) {
     .command('list')
     .description('List available and installed plugins.')
     .action(async () => {
-      const variant = await detectVariant();
-      const registry = await PluginRegistry.load();
-      const plugins = registry.getPluginsForVariant(variant);
+      const result = await listPlugins({ projectPath: process.cwd() });
 
       console.log(
-        chalk.white(`MakerKit Plugins ${chalk.gray(`(${variant})`)}\n`),
+        chalk.white(`MakerKit Plugins ${chalk.gray(`(${result.variant})`)}\n`),
       );
 
       console.log(
@@ -22,14 +19,12 @@ export function createListPluginsCommand(parentCommand: Command) {
 
       let installedCount = 0;
 
-      for (const plugin of plugins) {
-        const installed = await isInstalled(plugin, variant);
-
-        if (installed) {
+      for (const plugin of result.plugins) {
+        if (plugin.installed) {
           installedCount++;
         }
 
-        const status = installed
+        const status = plugin.installed
           ? chalk.green('installed')
           : chalk.gray('available');
 
@@ -39,7 +34,7 @@ export function createListPluginsCommand(parentCommand: Command) {
       }
 
       console.log(
-        `\n  ${chalk.white(`${installedCount} installed`)} / ${chalk.gray(`${plugins.length} available`)}\n`,
+        `\n  ${chalk.white(`${installedCount} installed`)} / ${chalk.gray(`${result.plugins.length} available`)}\n`,
       );
 
       if (installedCount === 0) {
