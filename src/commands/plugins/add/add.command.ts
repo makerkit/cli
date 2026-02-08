@@ -1,18 +1,10 @@
-import {
-  PluginRegistry,
-  getEnvVars,
-  isInstalled,
-} from '@/src/plugins-model';
+import { addPlugin } from '@/src/utils/add-plugin';
+import { isGitClean } from '@/src/utils/git';
+import { listPlugins } from '@/src/utils/list-plugins';
 import {
   clearCachedUsername,
   getOrPromptUsername,
 } from '@/src/utils/username-cache';
-import { appendEnvVars } from '@/src/utils/env-vars';
-import { isGitClean } from '@/src/utils/git';
-import { saveBaseVersions } from '@/src/utils/base-store';
-import { installRegistryFiles } from '@/src/utils/install-registry-files';
-import { runCodemod } from '@/src/utils/run-codemod';
-import { validateProject } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import ora from 'ora';
@@ -25,7 +17,7 @@ export function createAddCommand(parentCommand: Command) {
     .description('Install one or more MakerKit plugins.')
     .action(async (pluginIds: string[]) => {
       try {
-        // 1. Validate git is clean
+        // 1. Validate git is clean once upfront
         const gitClean = await isGitClean();
 
         if (!gitClean) {
@@ -38,22 +30,10 @@ export function createAddCommand(parentCommand: Command) {
           process.exit(1);
         }
 
-        // 2. Validate project and detect variant
-        const { variant } = await validateProject();
-
-        // 3. Load registry and resolve username once
-        const registry = await PluginRegistry.load();
-
+        // 2. If no plugin IDs provided, show interactive selection
         if (!pluginIds || pluginIds.length === 0) {
-          const plugins = registry.getPluginsForVariant(variant);
-
-          const available = [];
-
-          for (const p of plugins) {
-            if (!(await isInstalled(p, variant))) {
-              available.push(p);
-            }
-          }
+          const pluginsResult = await listPlugins({ projectPath: process.cwd() });
+          const available = pluginsResult.plugins.filter((p) => !p.installed);
 
           if (available.length === 0) {
             console.log(chalk.green('All plugins are already installed.'));
@@ -77,63 +57,56 @@ export function createAddCommand(parentCommand: Command) {
           }
         }
 
-        const username = await getOrPromptUsername();
+        // 3. Prompt for username once
+        let username = await getOrPromptUsername();
 
+        // 4. Install each plugin
         for (const pluginId of pluginIds) {
+          console.log(
+            `\nInstalling ${chalk.cyan(pluginId)}...\n`,
+          );
+
+          const filesSpinner = ora('Installing plugin...').start();
+
+          let result;
+
           try {
-            const plugin = registry.validatePlugin(pluginId, variant);
+            result = await addPlugin({
+              projectPath: process.cwd(),
+              pluginId,
+              githubUsername: username,
+              skipGitCheck: true,
+              captureCodemodOutput: false,
+            });
+          } catch (error) {
+            // Auth failure — clear username, re-prompt, retry once
+            filesSpinner.fail('Failed to install plugin.');
 
-            // 4. Check if already installed via filesystem
-            if (await isInstalled(plugin, variant)) {
-              console.log(
-                chalk.yellow(
-                  `Plugin "${plugin.name}" is already installed. Skipping.`,
-                ),
-              );
-
-              continue;
-            }
+            clearCachedUsername();
 
             console.log(
-              `\nInstalling ${chalk.cyan(plugin.name)} (${chalk.gray(plugin.id)}) for ${chalk.gray(variant)}...\n`,
+              chalk.yellow('\nRetrying with a different username...\n'),
             );
 
-            // 5. Fetch and write plugin files from registry
-            const filesSpinner = ora('Installing plugin files...').start();
+            username = await getOrPromptUsername();
 
-            let installedItem;
+            const retrySpinner = ora('Installing plugin...').start();
 
             try {
-              installedItem = await installRegistryFiles(variant, pluginId, username);
-            } catch (error) {
-              filesSpinner.fail('Failed to install plugin files.');
+              result = await addPlugin({
+                projectPath: process.cwd(),
+                pluginId,
+                githubUsername: username,
+                skipGitCheck: true,
+                captureCodemodOutput: false,
+              });
+            } catch (retryError) {
+              retrySpinner.fail('Failed to install plugin.');
 
-              clearCachedUsername();
+              const message =
+                retryError instanceof Error ? retryError.message : 'Unknown error';
 
-              console.log(
-                chalk.yellow('\nRetrying with a different username...\n'),
-              );
-
-              const retryUsername = await getOrPromptUsername();
-
-              const retrySpinner = ora('Installing plugin files...').start();
-              installedItem = await installRegistryFiles(variant, pluginId, retryUsername);
-              retrySpinner.succeed('Plugin files installed.');
-            }
-
-            await saveBaseVersions(pluginId, installedItem.files);
-
-            if (filesSpinner.isSpinning) {
-              filesSpinner.succeed('Plugin files installed.');
-            }
-
-            // 6. Run codemod (AST transforms + workspace deps)
-            console.log(chalk.gray('\nRunning plugin codemod...\n'));
-            const codemodResult = await runCodemod(variant, pluginId);
-
-            if (!codemodResult.success) {
-              console.error(chalk.red(`\nPlugin "${pluginId}" installation failed.`));
-              console.error(chalk.red(codemodResult.output));
+              console.error(chalk.red(`\nError installing "${pluginId}": ${message}`));
               console.log(
                 chalk.yellow(
                   '\nTo revert changes, run: git checkout . && git clean -fd',
@@ -143,39 +116,21 @@ export function createAddCommand(parentCommand: Command) {
               process.exit(1);
             }
 
-            // 7. Add env vars (variant-specific)
-            const envVars = getEnvVars(plugin, variant);
+            if (result.success) {
+              retrySpinner.succeed('Plugin installed.');
+            } else {
+              retrySpinner.stop();
+            }
+          }
 
-            if (envVars.length > 0) {
-              const envSpinner = ora('Adding environment variables...').start();
-
-              await appendEnvVars(envVars, plugin.name);
-
-              envSpinner.succeed('Environment variables added.');
+          if (!result.success) {
+            if (result.reason.includes('already installed')) {
+              filesSpinner.warn(result.reason + ' Skipping.');
+              continue;
             }
 
-            // 8. Print summary
-            console.log(chalk.green(`\n${plugin.name} installed successfully!`));
-
-            if (envVars.length > 0) {
-              console.log(chalk.white('\nEnvironment variables to configure:'));
-
-              for (const envVar of envVars) {
-                console.log(
-                  `  ${chalk.cyan(envVar.key)} - ${envVar.description}`,
-                );
-              }
-            }
-
-            if (plugin.postInstallMessage) {
-              console.log(chalk.white('\nNext steps:'));
-              console.log(`  ${chalk.cyan(plugin.postInstallMessage)}`);
-            }
-          } catch (error) {
-            const message =
-              error instanceof Error ? error.message : 'Unknown error';
-
-            console.error(chalk.red(`\nError installing "${pluginId}": ${message}`));
+            filesSpinner.fail('Failed to install plugin.');
+            console.error(chalk.red(`\n${result.reason}`));
             console.log(
               chalk.yellow(
                 '\nTo revert changes, run: git checkout . && git clean -fd',
@@ -184,9 +139,28 @@ export function createAddCommand(parentCommand: Command) {
 
             process.exit(1);
           }
+
+          if (filesSpinner.isSpinning) {
+            filesSpinner.succeed(`${result.pluginName} installed successfully!`);
+          }
+
+          if (result.envVars.length > 0) {
+            console.log(chalk.white('\nEnvironment variables to configure:'));
+
+            for (const envVar of result.envVars) {
+              console.log(
+                `  ${chalk.cyan(envVar.key)} - ${envVar.description}`,
+              );
+            }
+          }
+
+          if (result.postInstallMessage) {
+            console.log(chalk.white('\nNext steps:'));
+            console.log(`  ${chalk.cyan(result.postInstallMessage)}`);
+          }
         }
 
-        // 9. Post-install warnings and tips
+        // 5. Post-install warnings
         console.log('');
         console.log(chalk.yellow('Important:'));
         console.log(

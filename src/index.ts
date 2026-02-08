@@ -5,6 +5,8 @@ import { projectCommand } from '@/src/commands/project/project.command';
 import { Command } from 'commander';
 import { config } from 'dotenv';
 
+import { CLI_VERSION } from '@/src/version';
+
 config({
   path: '.env.local',
 });
@@ -18,7 +20,7 @@ async function main() {
     .description(
       'Your SaaS Kit companion. Add plugins, manage migrations, and more.'
     )
-    .version('2.0.0', '-v, --version', 'display the version number');
+    .version(CLI_VERSION, '-v, --version', 'display the version number');
 
   program.addCommand(newCommand).addCommand(pluginsCommand).addCommand(projectCommand);
 
