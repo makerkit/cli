@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0 - 2026-02-08
+
+Complete rewrite of the plugin system. Replaced git subtree distribution with a registry-based architecture using shadcn's JSON format and AST-powered codemods. Added a new `project update` command and MCP tools for pulling upstream kit updates with AI-assisted conflict resolution.
+
+### New `project update` command
+- `project update` - Pull latest changes from the upstream MakerKit repository
+- Auto-detects kit variant and maps to the correct upstream repo
+- Detects SSH access to GitHub; falls back to HTTPS URLs when SSH is unavailable
+- Configures `upstream` git remote automatically (with user confirmation)
+- Warns when the existing upstream remote points to the wrong repository
+- Reports merge conflicts with step-by-step resolution instructions
+
+### New plugin commands
+- `plugins add [id...]` - Install one or more plugins (interactive multi-select when no arguments given)
+- `plugins update [id...]` - Update installed plugins with confirmation before overwriting modified files
+- `plugins outdated` - Check which installed plugins have newer versions available
+- `plugins diff [id]` - Show a colored unified diff between local files and the latest registry version
+- `plugins init` - Configure GitHub username for registry access
+- `plugins list` - List available and installed plugins with filesystem-based detection
+
+### MCP tools
+- `makerkit_status` - Project introspection: variant, git status, registry config, installed plugins
+- `makerkit_list_plugins` - List available plugins with install status and metadata
+- `makerkit_add_plugin` - Install a plugin (codemod, env vars, base version storage)
+- `makerkit_init_registry` - Cache GitHub username for registry auth
+- `makerkit_check_update` - Three-way diff analysis (base/local/remote) with per-file status and content
+- `makerkit_apply_update` - Write AI-resolved files to disk and update base versions
+- `makerkit_project_pull` - Pull upstream kit updates with AI-assisted conflict resolution; returns base/ours/theirs content for each conflicting file
+- `makerkit_project_resolve_conflicts` - Write AI-resolved files, stage them, and complete the merge commit
+
+### Architecture changes
+- Built custom file download orchestrator (shadcn CLI doesn't support nested file paths)
+- Plugin catalog fetched from remote registry with 1-hour local cache and bundled fallback
+- Variant auto-detection from `package.json` dependencies (Next.js Supabase, Drizzle, Prisma, React Router)
+- Filesystem-based installation detection (no manifest file needed)
+- Clean git state enforcement with `git checkout . && git clean -fd` rollback
+- Registry authentication via GitHub organization membership
+- SSH/HTTPS detection is now automatic across CLI and MCP tools
+
+### Other changes
+- Added Next.js Drizzle and Prisma kits to `new` command
+- Removed deprecated commands: `blog`, `i18n`, `license`
+- Removed legacy git subtree install/update/service commands
+
 ## 1.3.14 - 2025-10-01
 - Added Signoz plugin
 - Added Paddle plugin

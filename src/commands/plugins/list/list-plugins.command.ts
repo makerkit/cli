@@ -1,35 +1,51 @@
-import { KitsModel } from '@/src/kits-model';
-import { validatePlugin } from '@/src/plugins-model';
+import { PluginRegistry, isInstalled } from '@/src/plugins-model';
+import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
 
 export function createListPluginsCommand(parentCommand: Command) {
   return parentCommand
     .command('list')
-    .description('List available plugins.')
-    .action(() => {
-      const kits = Object.values(KitsModel);
+    .description('List available and installed plugins.')
+    .action(async () => {
+      const variant = await detectVariant();
+      const registry = await PluginRegistry.load();
+      const plugins = registry.getPluginsForVariant(variant);
 
-      console.log(chalk.white('Makerkit available plugins...'));
       console.log(
-        `[${chalk.green('Plugin Name')} (${chalk.gray('plugin-id')})]\n`
+        chalk.white(`MakerKit Plugins ${chalk.gray(`(${variant})`)}\n`),
       );
 
-      for (const kit of kits) {
-        console.log(`${chalk.cyan(kit.name)}`);
+      console.log(
+        `  ${chalk.green('Plugin Name')} ${chalk.gray('(plugin-id)')} — Status\n`,
+      );
 
-        if (!kit.plugins.length) {
-          console.log(chalk.yellow(`- No plugins available`) + '\n');
+      let installedCount = 0;
 
-          continue;
+      for (const plugin of plugins) {
+        const installed = await isInstalled(plugin, variant);
+
+        if (installed) {
+          installedCount++;
         }
 
-        for (const plugin of kit.plugins) {
-          const { name, id } = validatePlugin(plugin);
-          console.log(`- ${chalk.green(name)} (${chalk.gray(id)})`);
-        }
+        const status = installed
+          ? chalk.green('installed')
+          : chalk.gray('available');
 
-        console.log('');
+        console.log(
+          `  ${chalk.cyan(plugin.name)} ${chalk.gray(`(${plugin.id})`)} — ${status}`,
+        );
+      }
+
+      console.log(
+        `\n  ${chalk.white(`${installedCount} installed`)} / ${chalk.gray(`${plugins.length} available`)}\n`,
+      );
+
+      if (installedCount === 0) {
+        console.log(
+          `Run ${chalk.cyan('makerkit plugins init')} to set up the registry, then ${chalk.cyan('makerkit plugins add <plugin-id>')} to install.`,
+        );
       }
     });
 }

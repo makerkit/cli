@@ -1,16 +1,48 @@
 import { join } from 'path';
-import { KitsModel, validateKit } from '@/src/kits-model';
+
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { execa } from 'execa';
+import invariant from 'tiny-invariant';
 import ora from 'ora';
 import prompts from 'prompts';
+
+const Kits = [
+  {
+    name: 'Next.js Supabase',
+    id: 'next-supabase-turbo',
+    repository: 'git@github.com:makerkit/next-supabase-saas-kit-turbo',
+  },
+  {
+    name: 'Next.js Drizzle',
+    id: 'next-drizzle',
+    repository: 'git@github.com:makerkit/next-drizzle-saas-kit-turbo',
+  },
+  {
+    name: 'Next.js Prisma',
+    id: 'next-prisma',
+    repository: 'git@github.com:makerkit/next-prisma-saas-kit-turbo',
+  },
+  {
+    name: 'React Router Supabase',
+    id: 'react-router-supabase-turbo',
+    repository: 'git@github.com:makerkit/react-router-supabase-saas-kit-turbo',
+  },
+];
+
+function getKitById(id: string) {
+  const kit = Kits.find((k) => k.id === id);
+
+  invariant(kit, `Kit "${id}" not found`);
+
+  return kit;
+}
 
 export const newCommand = new Command()
   .name('new')
   .description('Initialize a new Makerkit project')
   .action(async () => {
-    const choices = Object.values(KitsModel).map((kit) => {
+    const choices = Kits.map((kit) => {
       return {
         title: kit.name,
         value: kit.id,
@@ -31,7 +63,7 @@ export const newCommand = new Command()
       },
     ]);
 
-    const { repository, name: kitName } = validateKit(kit);
+    const { repository, name: kitName } = getKitById(kit);
 
     const { confirm } = await prompts([
       {
@@ -84,7 +116,7 @@ async function installDependencies(projectName: string) {
     spinner.succeed(`Dependencies successfully installed!`);
 
     console.log(
-      `🎉 You can now get started. Open the project in your IDE and read the README.md file for more information.`
+      `You can now get started. Open the project in your IDE and read the README.md file for more information.`
     );
   } catch (e) {
     console.error(e);

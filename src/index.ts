@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-import { i18nCommand } from '@/src/commands/i18n/i18n.command';
-import { licenseCommand } from '@/src/commands/license/license.command';
 import { newCommand } from '@/src/commands/new/new.command';
 import { pluginsCommand } from '@/src/commands/plugins/plugins.command';
+import { projectCommand } from '@/src/commands/project/project.command';
 import { Command } from 'commander';
 import { config } from 'dotenv';
 
@@ -19,13 +18,9 @@ async function main() {
     .description(
       'Your SaaS Kit companion. Add plugins, manage migrations, and more.'
     )
-    .version('-v, --version', 'display the version number');
+    .version('2.0.0', '-v, --version', 'display the version number');
 
-  program
-    .addCommand(newCommand)
-    .addCommand(pluginsCommand)
-    .addCommand(i18nCommand)
-    .addCommand(licenseCommand);
+  program.addCommand(newCommand).addCommand(pluginsCommand).addCommand(projectCommand);
 
   program.parse();
 }
