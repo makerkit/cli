@@ -9,6 +9,7 @@ import {
 } from '@/src/utils/username-cache';
 import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
+import { saveBaseVersions } from '@/src/utils/base-store';
 import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { runCodemod } from '@/src/utils/run-codemod';
 import { validateProject } from '@/src/utils/workspace';
@@ -100,8 +101,10 @@ export function createAddCommand(parentCommand: Command) {
             // 5. Fetch and write plugin files from registry
             const filesSpinner = ora('Installing plugin files...').start();
 
+            let installedItem;
+
             try {
-              await installRegistryFiles(variant, pluginId, username);
+              installedItem = await installRegistryFiles(variant, pluginId, username);
             } catch (error) {
               filesSpinner.fail('Failed to install plugin files.');
 
@@ -114,9 +117,11 @@ export function createAddCommand(parentCommand: Command) {
               const retryUsername = await getOrPromptUsername();
 
               const retrySpinner = ora('Installing plugin files...').start();
-              await installRegistryFiles(variant, pluginId, retryUsername);
+              installedItem = await installRegistryFiles(variant, pluginId, retryUsername);
               retrySpinner.succeed('Plugin files installed.');
             }
+
+            await saveBaseVersions(pluginId, installedItem.files);
 
             if (filesSpinner.isSpinning) {
               filesSpinner.succeed('Plugin files installed.');

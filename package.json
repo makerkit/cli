@@ -10,7 +10,7 @@
   },
   "bin": {
     "makerkit": "./dist/index.js",
-    "makerkit-mcp": "./dist/mcp.js"
+    "makerkit-cli-mcp": "./dist/mcp.js"
   },
   "repository": {
     "url": "https://github.com/makerkit/cli.git"

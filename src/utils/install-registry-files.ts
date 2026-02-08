@@ -44,7 +44,7 @@ export async function installRegistryFiles(
   variant: string,
   pluginId: string,
   username: string,
-): Promise<void> {
+): Promise<RegistryItem> {
   const item = await fetchRegistryItem(variant, pluginId, username);
   const cwd = process.cwd();
 
@@ -62,4 +62,6 @@ export async function installRegistryFiles(
 
     await execaCommand(`pnpm add ${deps}`, { stdio: 'inherit' });
   }
+
+  return item;
 }

@@ -4,6 +4,7 @@ import {
   PluginRegistry,
   isInstalled,
 } from '@/src/plugins-model';
+import { saveBaseVersions } from '@/src/utils/base-store';
 import { getOrPromptUsername } from '@/src/utils/username-cache';
 import { fetchRegistryItem } from '@/src/utils/install-registry-files';
 import { validateProject } from '@/src/utils/workspace';
@@ -134,6 +135,8 @@ export function createUpdateCommand(parentCommand: Command) {
 
             await execaCommand(`pnpm add ${deps}`, { stdio: 'inherit' });
           }
+
+          await saveBaseVersions(pluginId, item.files);
 
           writeSpinner.succeed(`${plugin.name} updated.`);
         }

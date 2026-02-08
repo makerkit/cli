@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { newCommand } from '@/src/commands/new/new.command';
 import { pluginsCommand } from '@/src/commands/plugins/plugins.command';
+import { projectCommand } from '@/src/commands/project/project.command';
 import { Command } from 'commander';
 import { config } from 'dotenv';
 
@@ -19,7 +20,7 @@ async function main() {
     )
     .version('2.0.0', '-v, --version', 'display the version number');
 
-  program.addCommand(newCommand).addCommand(pluginsCommand);
+  program.addCommand(newCommand).addCommand(pluginsCommand).addCommand(projectCommand);
 
   program.parse();
 }
