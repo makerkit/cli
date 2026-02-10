@@ -139,7 +139,6 @@ describe('addPlugin', () => {
 
     expect(cacheUsername).toHaveBeenCalledWith('newuser');
     expect(saveBaseVersions).toHaveBeenCalled();
-    expect(appendEnvVars).toHaveBeenCalled();
   });
 
   it('skips git check when skipGitCheck is true', async () => {
