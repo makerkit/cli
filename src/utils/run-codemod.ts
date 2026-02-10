@@ -1,5 +1,7 @@
 import { execaCommand } from 'execa';
 
+const CODEMOD_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
 export async function runCodemod(
   variant: string,
   pluginId: string,
@@ -15,6 +17,7 @@ export async function runCodemod(
 
     const { stdout, stderr } = await execaCommand(command, {
       stdio: options?.captureOutput ? 'pipe' : 'inherit',
+      timeout: CODEMOD_TIMEOUT_MS,
     });
 
     return {
@@ -29,6 +32,10 @@ export async function runCodemod(
 
       if ('stderr' in error && error.stderr) {
         message += `\n${error.stderr}`;
+      }
+
+      if ('timedOut' in error && error.timedOut) {
+        message = `Codemod timed out after ${CODEMOD_TIMEOUT_MS / 1000}s (the workflow engine may have stalled after an error)`;
       }
     }
 

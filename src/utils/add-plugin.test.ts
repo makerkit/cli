@@ -93,7 +93,7 @@ describe('addPlugin', () => {
     }
   });
 
-  it('returns failure when codemod fails', async () => {
+  it('returns success with warning when codemod fails', async () => {
     mocks.mockGitClean(isGitClean, true);
     mocks.mockValidProject(validateProject);
     mocks.mockUsername(getCachedUsername, 'user');
@@ -101,13 +101,15 @@ describe('addPlugin', () => {
     vi.mocked(isInstalled).mockResolvedValue(false);
     mocks.mockInstallRegistryFiles(installRegistryFiles);
     vi.mocked(runCodemod).mockResolvedValue({ success: false, output: 'codemod error' });
+    vi.mocked(getEnvVars).mockReturnValue([]);
 
     const result = await addPlugin({ projectPath: '/fake', pluginId: 'feedback' });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
 
-    if (!result.success) {
-      expect(result.reason).toContain('codemod');
+    if (result.success) {
+      expect(result.codemodWarning).toBeDefined();
+      expect(result.codemodWarning).toContain('codemod');
     }
   });
 
