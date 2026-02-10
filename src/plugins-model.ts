@@ -109,7 +109,7 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
     },
   },
   honeybadger: {
-    name: 'PostHog',
+    name: 'Honeybadger',
     id: 'honeybadger',
     description: 'Add Honeybadger Error Tracking to your site.',
     variants: {

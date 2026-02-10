@@ -2,8 +2,6 @@
 
 The CLI is a set of commands that help you manage your Makerkit SaaS Starter Kits.
 
-The CLI is currently in beta.
-
 The CLI auto-detects whether you have SSH access to GitHub. If SSH is not available, it falls back to HTTPS URLs automatically.
 
 ## Installation
@@ -217,7 +215,7 @@ If you haven't installed the package globally, use `npx` instead:
 
 ### Three-way merge workflow
 
-When a plugin is installed or updated, the CLI stores the original registry files as **base versions** in `.makerkit/bases/`. On the next update, the `makerkit_check_update` tool computes a three-way diff (base vs. local vs. remote) for each file and returns one of these statuses:
+When a plugin is installed or updated, the CLI stores the original registry files as **base versions** in `./node_modules/.cache/makerkit/bases/`. On the next update, the `makerkit_check_update` tool computes a three-way diff (base vs. local vs. remote) for each file and returns one of these statuses:
 
 | Status | Meaning |
 |--------|---------|

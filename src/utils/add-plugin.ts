@@ -4,7 +4,6 @@ import {
   isInstalled,
 } from '@/src/plugins-model';
 import { saveBaseVersions } from '@/src/utils/base-store';
-import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
 import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { runCodemod } from '@/src/utils/run-codemod';
@@ -88,10 +87,6 @@ export async function addPlugin(
   }
 
   const envVars = getEnvVars(plugin, variant);
-
-  if (envVars.length > 0) {
-    await appendEnvVars(envVars, plugin.name);
-  }
 
   return {
     success: true,
