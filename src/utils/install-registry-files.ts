@@ -1,6 +1,4 @@
 import { dirname, join } from 'path';
-
-import { execaCommand } from 'execa';
 import fs from 'fs-extra';
 
 export interface RegistryFile {
@@ -53,14 +51,6 @@ export async function installRegistryFiles(
 
     await fs.ensureDir(dirname(targetPath));
     await fs.writeFile(targetPath, file.content);
-  }
-
-  if (item.dependencies && Object.keys(item.dependencies).length > 0) {
-    const deps = Object.entries(item.dependencies)
-      .map(([name, version]) => `${name}@${version}`)
-      .join(' ');
-
-    await execaCommand(`pnpm add ${deps}`, { stdio: 'inherit' });
   }
 
   return item;

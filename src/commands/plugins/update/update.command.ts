@@ -10,7 +10,6 @@ import { fetchRegistryItem } from '@/src/utils/install-registry-files';
 import { validateProject } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { execaCommand } from 'execa';
 import fs from 'fs-extra';
 import ora from 'ora';
 import prompts from 'prompts';
@@ -126,14 +125,6 @@ export function createUpdateCommand(parentCommand: Command) {
 
             await fs.ensureDir(dirname(targetPath));
             await fs.writeFile(targetPath, file.content);
-          }
-
-          if (item.dependencies && Object.keys(item.dependencies).length > 0) {
-            const deps = Object.entries(item.dependencies)
-              .map(([name, version]) => `${name}@${version}`)
-              .join(' ');
-
-            await execaCommand(`pnpm add ${deps}`, { stdio: 'inherit' });
           }
 
           await saveBaseVersions(pluginId, item.files);

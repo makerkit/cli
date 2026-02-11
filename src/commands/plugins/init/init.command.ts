@@ -1,6 +1,6 @@
-import { PluginRegistry } from '@/src/plugins-model';
+import { initRegistry } from '@/src/utils/init-registry';
+import { listPlugins } from '@/src/utils/list-plugins';
 import { getOrPromptUsername } from '@/src/utils/username-cache';
-import { detectVariant } from '@/src/utils/workspace';
 import chalk from 'chalk';
 import { Command } from 'commander';
 
@@ -12,22 +12,24 @@ export function createInitCommand(parentCommand: Command) {
     )
     .action(async () => {
       try {
-        const variant = await detectVariant();
+        const username = await getOrPromptUsername();
+
+        const initResult = await initRegistry({
+          projectPath: process.cwd(),
+          githubUsername: username,
+        });
 
         console.log(
-          `Detected project variant: ${chalk.cyan(variant)}\n`,
+          `Detected project variant: ${chalk.cyan(initResult.variant)}\n`,
         );
-
-        await getOrPromptUsername();
 
         console.log(chalk.green('Registry configured.\n'));
 
-        const registry = await PluginRegistry.load();
-        const plugins = registry.getPluginsForVariant(variant);
+        const pluginsResult = await listPlugins({ projectPath: process.cwd() });
 
         console.log(chalk.white('Available plugins:\n'));
 
-        for (const plugin of plugins) {
+        for (const plugin of pluginsResult.plugins) {
           console.log(
             `  ${chalk.green(plugin.name)} ${chalk.gray(`(${plugin.id})`)}`,
           );
