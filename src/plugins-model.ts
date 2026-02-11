@@ -130,6 +130,39 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
         ],
         path: 'packages/plugins/honeybadger',
       },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'HONEYBADGER_API_KEY',
+            description: 'Honeybadger private API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_ENVIRONMENT',
+            description: 'Honeybadger environment',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_REVISION',
+            description: 'Honeybadger log revision',
+          }
+        ],
+        path: 'packages/plugins/honeybadger',
+      },
+      'next-prisma': {
+        envVars: [
+          {
+            key: 'HONEYBADGER_API_KEY',
+            description: 'Honeybadger private API key',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_ENVIRONMENT',
+            description: 'Honeybadger environment',
+          },
+          {
+            key: 'NEXT_PUBLIC_HONEYBADGER_REVISION',
+            description: 'Honeybadger log revision',
+          }
+        ],
+      },
     }
   },
   posthog: {
@@ -315,7 +348,7 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
   },
   directus: {
     name: 'Directus CMS',
-    id: 'directus-cms',
+    id: 'directus',
     description: 'Add Directus as your CMS.',
     variants: {
       'next-supabase': {
