@@ -140,7 +140,17 @@ export function createAddCommand(parentCommand: Command) {
             process.exit(1);
           }
 
-          if (filesSpinner.isSpinning) {
+          if (result.codemodWarning) {
+            filesSpinner.warn(
+              `${result.pluginName} installed with warnings — some automated steps may not have completed.`,
+            );
+            console.log(chalk.yellow(`\n${result.codemodWarning}`));
+            console.log(
+              chalk.yellow(
+                '\nPlugin files were written successfully. Review the changes with `git diff` and complete any missing steps manually.',
+              ),
+            );
+          } else if (filesSpinner.isSpinning) {
             filesSpinner.succeed(`${result.pluginName} installed successfully!`);
           }
 

@@ -4,7 +4,6 @@ import {
   isInstalled,
 } from '@/src/plugins-model';
 import { saveBaseVersions } from '@/src/utils/base-store';
-import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
 import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { runCodemod } from '@/src/utils/run-codemod';
@@ -31,6 +30,7 @@ export type AddPluginResult =
       envVars: { key: string; description: string }[];
       postInstallMessage: string | null;
       codemodOutput: string;
+      codemodWarning?: string;
     }
   | { success: false; reason: string };
 
@@ -80,18 +80,7 @@ export async function addPlugin(
     captureOutput: options.captureCodemodOutput ?? true,
   });
 
-  if (!codemodResult.success) {
-    return {
-      success: false,
-      reason: `Plugin installation failed during codemod.\n${codemodResult.output}\nTo revert: git checkout . && git clean -fd`,
-    };
-  }
-
   const envVars = getEnvVars(plugin, variant);
-
-  if (envVars.length > 0) {
-    await appendEnvVars(envVars, plugin.name);
-  }
 
   return {
     success: true,
@@ -101,5 +90,8 @@ export async function addPlugin(
     envVars: envVars.map((e) => ({ key: e.key, description: e.description })),
     postInstallMessage: plugin.postInstallMessage ?? null,
     codemodOutput: codemodResult.output,
+    codemodWarning: codemodResult.success
+      ? undefined
+      : `The automated codemod did not complete successfully. Plugin files were installed but some wiring steps may have failed.\n${codemodResult.output}`,
   };
 }

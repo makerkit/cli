@@ -109,7 +109,7 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
     },
   },
   honeybadger: {
-    name: 'PostHog',
+    name: 'Honeybadger',
     id: 'honeybadger',
     description: 'Add Honeybadger Error Tracking to your site.',
     variants: {
@@ -297,6 +297,68 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
       },
     },
   },
+  'meshes-analytics': {
+    name: 'Meshes Analytics',
+    id: 'meshes-analytics',
+    description: 'Add Meshes Analytics to your app.',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_MESHES_PUBLISHABLE_KEY',
+            description: 'The Meshes publishable key'
+          }
+        ],
+        path: 'packages/plugins/meshes-analytics',
+      },
+    },
+  },
+  directus: {
+    name: 'Directus CMS',
+    id: 'directus-cms',
+    description: 'Add Directus as your CMS.',
+    variants: {
+      'next-supabase': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_DIRECTUS_URL',
+            description: 'The Directus URL'
+          },
+          {
+            key: 'DIRECTUS_ACCESS_TOKEN',
+            description: 'The Directus access token'
+          }
+        ],
+        path: 'packages/plugins/directus',
+      },
+      'next-drizzle': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_DIRECTUS_URL',
+            description: 'The Directus URL'
+          },
+          {
+            key: 'DIRECTUS_ACCESS_TOKEN',
+            description: 'The Directus access token'
+          }
+        ],
+        path: 'packages/plugins/directus',
+      },
+      'next-prisma': {
+        envVars: [
+          {
+            key: 'NEXT_PUBLIC_DIRECTUS_URL',
+            description: 'The Directus URL'
+          },
+          {
+            key: 'DIRECTUS_ACCESS_TOKEN',
+            description: 'The Directus access token'
+          }
+        ],
+        path: 'packages/plugins/directus',
+      },
+    },
+  }
 };
 
 export class PluginRegistry {

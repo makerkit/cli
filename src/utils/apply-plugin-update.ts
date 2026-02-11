@@ -1,6 +1,5 @@
 import { dirname, join } from 'path';
 
-import { execaCommand } from 'execa';
 import fs from 'fs-extra';
 
 import { PluginRegistry } from '@/src/plugins-model';
@@ -32,7 +31,6 @@ export type ApplyPluginUpdateResult =
       written: string[];
       skipped: string[];
       deleted: string[];
-      dependenciesInstalled: boolean;
     }
   | { success: false; reason: string };
 
@@ -106,21 +104,6 @@ export async function applyPluginUpdate(
     }
   }
 
-  let dependenciesInstalled = false;
-
-  if (
-    options.installDependencies !== false &&
-    item.dependencies &&
-    Object.keys(item.dependencies).length > 0
-  ) {
-    const deps = Object.entries(item.dependencies)
-      .map(([name, version]) => `${name}@${version}`)
-      .join(' ');
-
-    await execaCommand(`pnpm add ${deps}`, { stdio: 'pipe' });
-    dependenciesInstalled = true;
-  }
-
   return {
     success: true,
     pluginId: options.pluginId,
@@ -128,6 +111,5 @@ export async function applyPluginUpdate(
     written,
     skipped,
     deleted,
-    dependenciesInstalled,
   };
 }

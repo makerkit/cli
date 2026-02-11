@@ -76,7 +76,6 @@ describe('applyPluginUpdate', () => {
         { path: 'file-b.ts', action: 'skip' },
         { path: 'file-c.ts', action: 'delete' },
       ],
-      installDependencies: false,
     });
 
     expect(result.success).toBe(true);
@@ -85,7 +84,6 @@ describe('applyPluginUpdate', () => {
       expect(result.written).toEqual(['file-a.ts']);
       expect(result.skipped).toEqual(['file-b.ts']);
       expect(result.deleted).toEqual(['file-c.ts']);
-      expect(result.dependenciesInstalled).toBe(false);
     }
 
     expect(fs.writeFile).toHaveBeenCalled();
@@ -110,42 +108,5 @@ describe('applyPluginUpdate', () => {
     if (!result.success) {
       expect(result.reason).toContain('no content provided');
     }
-  });
-
-  it('installs dependencies when present', async () => {
-    setupCommon({ 'some-pkg': '1.0.0' });
-
-    const result = await applyPluginUpdate({
-      projectPath: '/fake',
-      pluginId: 'feedback',
-      files: [],
-    });
-
-    expect(result.success).toBe(true);
-
-    if (result.success) {
-      expect(result.dependenciesInstalled).toBe(true);
-    }
-
-    expect(execaCommand).toHaveBeenCalledWith('pnpm add some-pkg@1.0.0', { stdio: 'pipe' });
-  });
-
-  it('skips dependency install when installDependencies is false', async () => {
-    setupCommon({ 'some-pkg': '1.0.0' });
-
-    const result = await applyPluginUpdate({
-      projectPath: '/fake',
-      pluginId: 'feedback',
-      files: [],
-      installDependencies: false,
-    });
-
-    expect(result.success).toBe(true);
-
-    if (result.success) {
-      expect(result.dependenciesInstalled).toBe(false);
-    }
-
-    expect(execaCommand).not.toHaveBeenCalled();
   });
 });
