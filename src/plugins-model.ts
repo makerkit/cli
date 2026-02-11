@@ -297,7 +297,7 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
       },
     },
   },
-  meshes: {
+  'meshes-analytics': {
     name: 'Meshes Analytics',
     id: 'meshes-analytics',
     description: 'Add Meshes Analytics to your app.',
