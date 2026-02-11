@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.1 - 2026-02-11
+
+- Fix `pnpm dlx @makerkit/cli` failing with `ERR_PNPM_DLX_MULTIPLE_BINS` by adding a default `cli` bin entry matching the unscoped package name
+
 ## 2.0.0 - 2026-02-08
 
 Complete rewrite of the plugin system. Replaced git subtree distribution with a registry-based architecture using shadcn's JSON format and AST-powered codemods. Added a new `project update` command and MCP tools for pulling upstream kit updates with AI-assisted conflict resolution.
