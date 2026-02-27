@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.3 - 2026-02-27
+
+- Add 'quiet' option to dotenv to remove outputs that break MCP
+
+## 2.0.2 - 2026-02-12
+
+- Added Honeybadger variants
+- Fix Directus plugin name
+
 ## 2.0.1 - 2026-02-11
 
 - Fix `pnpm dlx @makerkit/cli` failing with `ERR_PNPM_DLX_MULTIPLE_BINS` by adding a default `cli` bin entry matching the unscoped package name

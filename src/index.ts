@@ -9,6 +9,7 @@ import { CLI_VERSION } from '@/src/version';
 
 config({
   path: '.env.local',
+  quiet: true,
 });
 
 process.on('SIGINT', () => process.exit(0));

@@ -20,7 +20,7 @@ import { withProjectDir } from '@/src/utils/with-project-dir';
 import type { Variant } from '@/src/utils/workspace';
 import { CLI_VERSION } from '@/src/version';
 
-config({ path: '.env.local' });
+config({ path: '.env.local', quiet: true });
 
 function textContent(text: string) {
   return { content: [{ type: 'text' as const, text }] };
