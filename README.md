@@ -207,7 +207,7 @@ If you haven't installed the package globally, use `npx` instead:
   "mcpServers": {
     "makerkit-cli": {
       "command": "npx",
-      "args": ["-y", "@makerkit/cli@latest", "makerkit-cli-mcp"]
+      "args": ["-y", "--quiet", "@makerkit/cli@latest", "makerkit-cli-mcp"]
     }
   }
 }
