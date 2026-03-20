@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.4 - 2026-03-20
+
+- Add `makerkit_outdated_plugins` MCP tool to check all installed plugins for available updates
+
 ## 2.0.3 - 2026-02-27
 
 - Add 'quiet' option to dotenv to remove outputs that break MCP

@@ -13,6 +13,7 @@ import { createProject } from '@/src/utils/create-project';
 import { getProjectStatus } from '@/src/utils/get-project-status';
 import { initRegistry } from '@/src/utils/init-registry';
 import { listPlugins } from '@/src/utils/list-plugins';
+import { outdatedPlugins } from '@/src/utils/outdated-plugins';
 import { listVariants, VARIANT_CATALOG } from '@/src/utils/list-variants';
 import { projectPull } from '@/src/utils/project-pull';
 import { resolveConflicts } from '@/src/utils/resolve-conflicts';
@@ -355,6 +356,48 @@ server.registerTool(
       }
 
       return textContent(JSON.stringify(result, null, 2));
+    } catch (error) {
+      return errorContent(error instanceof Error ? error.message : 'Unknown error');
+    }
+  },
+);
+
+server.registerTool(
+  'makerkit_outdated_plugins',
+  {
+    description:
+      'Check all installed plugins for available updates. Returns a list of plugins whose remote files differ from the local copies.',
+    inputSchema: {
+      projectPath: z.string().describe('Absolute path to the MakerKit project root'),
+      githubUsername: z
+        .string()
+        .optional()
+        .describe('GitHub username for registry auth (uses cached if omitted)'),
+    },
+  },
+  async ({ projectPath, githubUsername }) => {
+    try {
+      const result = await withProjectDir(projectPath, () =>
+        outdatedPlugins({ projectPath, githubUsername }),
+      );
+
+      if (!result.success) {
+        return errorContent(result.reason);
+      }
+
+      return textContent(
+        JSON.stringify(
+          {
+            ...result,
+            note:
+              result.outdated.length > 0
+                ? 'Use makerkit_check_update on each plugin to see detailed diffs.'
+                : 'All installed plugins are up to date.',
+          },
+          null,
+          2,
+        ),
+      );
     } catch (error) {
       return errorContent(error instanceof Error ? error.message : 'Unknown error');
     }
