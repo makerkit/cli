@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.5 - 2026-03-25
+
+- Version-aware plugin registry: plugin files are now fetched from versioned URLs (`r/{variant}/v{major}/`) based on the kit's `package.json` version
+- Version-aware codemods: codemod packages are resolved at minor-level precision (e.g. `@makerkit/next-supabase-feedback@3.2`)
+- Backwards compatible: projects with unknown or unparseable versions fall back to unversioned URLs
+
 ## 2.0.4 - 2026-03-20
 
 - Add `makerkit_outdated_plugins` MCP tool to check all installed plugins for available updates

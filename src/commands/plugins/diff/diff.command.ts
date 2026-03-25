@@ -22,7 +22,7 @@ export function createDiffCommand(parentCommand: Command) {
     .description('Show differences between installed plugin files and the latest registry version.')
     .action(async (pluginId?: string) => {
       try {
-        const { variant } = await validateProject();
+        const { variant, majorVersion } = await validateProject();
         const registry = await PluginRegistry.load();
 
         if (!pluginId) {
@@ -71,7 +71,7 @@ export function createDiffCommand(parentCommand: Command) {
         const username = await getOrPromptUsername();
 
         const spinner = ora('Fetching latest plugin files...').start();
-        const item = await fetchRegistryItem(variant, pluginId, username);
+        const item = await fetchRegistryItem(variant, pluginId, username, majorVersion);
         spinner.succeed('Fetched latest plugin files.');
 
         const tempDir = join(tmpdir(), `makerkit-diff-${pluginId}`);

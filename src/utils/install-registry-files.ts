@@ -12,14 +12,17 @@ export interface RegistryItem {
   name: string;
   files: RegistryFile[];
   dependencies?: Record<string, string>;
+  codemodVersion?: string;
 }
 
 export async function fetchRegistryItem(
   variant: string,
   pluginId: string,
   username: string,
+  majorVersion?: number,
 ): Promise<RegistryItem> {
-  const url = `https://makerkit.dev/r/${variant}/${pluginId}.json?username=${username}`;
+  const versionSuffix = majorVersion != null ? `/v${majorVersion}` : '';
+  const url = `https://makerkit.dev/r/${variant}${versionSuffix}/${pluginId}.json?username=${username}`;
 
   const response = await fetch(url);
 
@@ -42,8 +45,9 @@ export async function installRegistryFiles(
   variant: string,
   pluginId: string,
   username: string,
+  majorVersion?: number,
 ): Promise<RegistryItem> {
-  const item = await fetchRegistryItem(variant, pluginId, username);
+  const item = await fetchRegistryItem(variant, pluginId, username, majorVersion);
   const cwd = process.cwd();
 
   for (const file of item.files) {

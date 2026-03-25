@@ -41,7 +41,7 @@ export type CheckPluginUpdateResult =
 export async function checkPluginUpdate(
   options: CheckPluginUpdateOptions,
 ): Promise<CheckPluginUpdateResult> {
-  const { variant } = await validateProject();
+  const { variant, majorVersion } = await validateProject();
 
   const username = options.githubUsername?.trim() || getCachedUsername();
 
@@ -58,7 +58,7 @@ export async function checkPluginUpdate(
   const registry = await PluginRegistry.load();
   registry.validatePlugin(options.pluginId, variant);
 
-  const item = await fetchRegistryItem(variant, options.pluginId, username);
+  const item = await fetchRegistryItem(variant, options.pluginId, username, majorVersion);
   const cwd = process.cwd();
   const hasBase = await hasBaseVersions(options.pluginId);
 

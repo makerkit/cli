@@ -51,7 +51,13 @@ export const mocks = {
     variant: string = 'next-supabase',
     version: string = '1.0.0',
   ) {
-    validateProjectFn.mockResolvedValue({ variant, version });
+    const major = parseInt(version.split('.')[0], 10);
+
+    validateProjectFn.mockResolvedValue({
+      variant,
+      version,
+      majorVersion: isNaN(major) ? undefined : major,
+    });
   },
 
   mockDetectVariant(

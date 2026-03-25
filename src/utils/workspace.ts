@@ -76,12 +76,16 @@ export async function detectVariant(): Promise<Variant> {
 export async function validateProject(): Promise<{
   variant: Variant;
   version: string;
+  majorVersion: number | undefined;
 }> {
   const variant = await detectVariant();
   const rootPkg = await fs.readJson(join(process.cwd(), 'package.json'));
+  const version: string = rootPkg.version ?? 'unknown';
+  const major = parseInt(version.split('.')[0], 10);
 
   return {
     variant,
-    version: rootPkg.version ?? 'unknown',
+    version,
+    majorVersion: isNaN(major) ? undefined : major,
   };
 }

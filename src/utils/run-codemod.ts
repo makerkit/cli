@@ -5,15 +5,17 @@ const CODEMOD_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 export async function runCodemod(
   variant: string,
   pluginId: string,
+  codemodVersion?: string,
   options?: { captureOutput?: boolean },
 ): Promise<{ success: boolean; output: string }> {
   try {
     const localPath = process.env.MAKERKIT_CODEMODS_PATH;
     const runner = process.env.MAKERKIT_PACKAGE_RUNNER ?? 'npx --yes';
+    const versionTag = codemodVersion ? `@${codemodVersion}` : '';
 
     const command = localPath
       ? `${runner} codemod workflow run --allow-dirty -w ${localPath}/codemods/${variant}/${pluginId}`
-      : `${runner} codemod --allow-dirty @makerkit/${variant}-${pluginId}`;
+      : `${runner} codemod --allow-dirty @makerkit/${variant}-${pluginId}${versionTag}`;
 
     const { stdout, stderr } = await execaCommand(command, {
       stdio: options?.captureOutput ? 'pipe' : 'inherit',

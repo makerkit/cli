@@ -37,7 +37,7 @@ export type ApplyPluginUpdateResult =
 export async function applyPluginUpdate(
   options: ApplyPluginUpdateOptions,
 ): Promise<ApplyPluginUpdateResult> {
-  const { variant } = await validateProject();
+  const { variant, majorVersion } = await validateProject();
 
   const username = options.githubUsername?.trim() || getCachedUsername();
 
@@ -54,7 +54,7 @@ export async function applyPluginUpdate(
   const registry = await PluginRegistry.load();
   registry.validatePlugin(options.pluginId, variant);
 
-  const item = await fetchRegistryItem(variant, options.pluginId, username);
+  const item = await fetchRegistryItem(variant, options.pluginId, username, majorVersion);
   const remoteByPath = new Map(item.files.map((f) => [f.target, f.content]));
 
   const cwd = process.cwd();

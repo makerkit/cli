@@ -21,7 +21,7 @@ export function createUpdateCommand(parentCommand: Command) {
     .description('Update installed plugins to the latest registry version.')
     .action(async (pluginIds?: string[]) => {
       try {
-        const { variant } = await validateProject();
+        const { variant, majorVersion } = await validateProject();
         const registry = await PluginRegistry.load();
 
         if (!pluginIds || pluginIds.length === 0) {
@@ -73,7 +73,7 @@ export function createUpdateCommand(parentCommand: Command) {
           }
 
           const spinner = ora(`Fetching latest ${plugin.name} files...`).start();
-          const item = await fetchRegistryItem(variant, pluginId, username);
+          const item = await fetchRegistryItem(variant, pluginId, username, majorVersion);
           spinner.succeed(`Fetched latest ${plugin.name} files.`);
 
           const cwd = process.cwd();

@@ -49,7 +49,7 @@ export async function addPlugin(
     }
   }
 
-  const { variant } = await validateProject();
+  const { variant, majorVersion } = await validateProject();
 
   const username = options.githubUsername?.trim() || getCachedUsername();
 
@@ -73,10 +73,10 @@ export async function addPlugin(
     };
   }
 
-  const item = await installRegistryFiles(variant, options.pluginId, username);
+  const item = await installRegistryFiles(variant, options.pluginId, username, majorVersion);
   await saveBaseVersions(options.pluginId, item.files);
 
-  const codemodResult = await runCodemod(variant, options.pluginId, {
+  const codemodResult = await runCodemod(variant, options.pluginId, item.codemodVersion, {
     captureOutput: options.captureCodemodOutput ?? true,
   });
 

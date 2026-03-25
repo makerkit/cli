@@ -36,8 +36,9 @@ async function isOutdated(
   plugin: PluginDefinition,
   variant: string,
   username: string,
+  majorVersion?: number,
 ): Promise<boolean> {
-  const item = await fetchRegistryItem(variant, plugin.id, username);
+  const item = await fetchRegistryItem(variant, plugin.id, username, majorVersion);
   const cwd = process.cwd();
 
   for (const file of item.files) {
@@ -60,7 +61,7 @@ async function isOutdated(
 export async function outdatedPlugins(
   options: OutdatedPluginsOptions,
 ): Promise<OutdatedPluginsResult> {
-  const { variant } = await validateProject();
+  const { variant, majorVersion } = await validateProject();
 
   const username = options.githubUsername?.trim() || getCachedUsername();
 
@@ -93,7 +94,7 @@ export async function outdatedPlugins(
 
   for (const plugin of installed) {
     try {
-      if (await isOutdated(plugin, variant, username)) {
+      if (await isOutdated(plugin, variant, username, majorVersion)) {
         outdated.push({
           id: plugin.id,
           name: plugin.name,
