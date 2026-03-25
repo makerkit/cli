@@ -15,10 +15,11 @@ export async function runCodemod(
 
     const command = localPath
       ? `${runner} codemod workflow run --allow-dirty -w ${localPath}/codemods/${variant}/${pluginId}`
-      : `${runner} codemod --allow-dirty @makerkit/${variant}-${pluginId}${versionTag}`;
+      : `${runner} codemod @makerkit/${variant}-${pluginId}${versionTag} --allow-dirty`;
 
     const { stdout, stderr } = await execaCommand(command, {
-      stdio: options?.captureOutput ? 'pipe' : 'inherit',
+      stdin: 'ignore',
+      stdio: options?.captureOutput ? 'pipe' : ['ignore', 'inherit', 'inherit'],
       timeout: CODEMOD_TIMEOUT_MS,
     });
 

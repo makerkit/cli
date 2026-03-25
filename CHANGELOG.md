@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.5 - 2026-03-25
+
+- Fix codemod CLI not recognizing package name due to argument ordering
+- Prevent codemod interactive prompts from hanging by ignoring stdin
+
 ## 2.0.4 - 2026-03-25
 
 - Version-aware plugin registry: plugin files are now fetched from versioned URLs (`r/{variant}/v{major}/`) based on the kit's `package.json` version
