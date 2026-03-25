@@ -9,9 +9,9 @@
     "access": "public"
   },
   "bin": {
-    "cli": "./dist/index.js",
-    "makerkit": "./dist/index.js",
-    "makerkit-cli-mcp": "./dist/mcp.js"
+    "cli": "./dist/index.mjs",
+    "makerkit": "./dist/index.mjs",
+    "makerkit-cli-mcp": "./dist/mcp.mjs"
   },
   "repository": {
     "url": "https://github.com/makerkit/cli.git"
