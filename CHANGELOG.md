@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.6 - 2026-03-25
+
+- Fix execa conflict between `stdin` and `stdio` options in codemod runner
+
 ## 2.0.5 - 2026-03-25
 
 - Fix codemod CLI not recognizing package name due to argument ordering
