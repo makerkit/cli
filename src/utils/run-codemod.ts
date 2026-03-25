@@ -15,7 +15,7 @@ export async function runCodemod(
 
     const command = localPath
       ? `${runner} codemod@latest workflow run --allow-dirty -w ${localPath}/codemods/${variant}/${pluginId}`
-      : `${runner} codemod@latest @makerkit/${variant}-${pluginId}${versionTag} --allow-dirty`;
+      : `${runner} codemod@latest run @makerkit/${variant}-${pluginId}${versionTag} --allow-dirty --no-interactive`;
 
     const { stdout, stderr } = await execaCommand(command, {
       stdio: options?.captureOutput ? 'pipe' : ['ignore', 'inherit', 'inherit'],

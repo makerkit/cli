@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.7 - 2026-03-25
+
+- Use `codemod run` subcommand and `--no-interactive` flag for non-interactive codemod execution
+
 ## 2.0.6 - 2026-03-25
 
 - Fix execa conflict between `stdin` and `stdio` options in codemod runner
