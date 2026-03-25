@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.8 - 2026-03-25
+
+- Switch codemod runner to native `spawn` with idle timeout to work around codemod CLI hang bug
+- Use `codemod run` subcommand with `--no-interactive` by default, with opt-in interactive mode
+- Pin `codemod@latest` for consistent CLI resolution
+- Stop ora spinner during codemod execution so output and prompts are visible
+
 ## 2.0.7 - 2026-03-25
 
 - Use `codemod run` subcommand and `--no-interactive` flag for non-interactive codemod execution

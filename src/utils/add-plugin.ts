@@ -18,7 +18,8 @@ export interface AddPluginOptions {
   pluginId: string;
   githubUsername?: string;
   skipGitCheck?: boolean;
-  captureCodemodOutput?: boolean;
+  onBeforeCodemod?: () => void;
+  onAfterCodemod?: () => void;
 }
 
 export type AddPluginResult =
@@ -76,9 +77,9 @@ export async function addPlugin(
   const item = await installRegistryFiles(variant, options.pluginId, username, majorVersion);
   await saveBaseVersions(options.pluginId, item.files);
 
-  const codemodResult = await runCodemod(variant, options.pluginId, item.codemodVersion, {
-    captureOutput: options.captureCodemodOutput ?? true,
-  });
+  options.onBeforeCodemod?.();
+  const codemodResult = await runCodemod(variant, options.pluginId, item.codemodVersion);
+  options.onAfterCodemod?.();
 
   const envVars = getEnvVars(plugin, variant);
 

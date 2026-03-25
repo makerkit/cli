@@ -76,7 +76,8 @@ export function createAddCommand(parentCommand: Command) {
               pluginId,
               githubUsername: username,
               skipGitCheck: true,
-              captureCodemodOutput: false,
+              onBeforeCodemod: () => filesSpinner.stop(),
+              onAfterCodemod: () => filesSpinner.start('Installing plugin...'),
             });
           } catch (error) {
             // Auth failure — clear username, re-prompt, retry once
@@ -98,7 +99,8 @@ export function createAddCommand(parentCommand: Command) {
                 pluginId,
                 githubUsername: username,
                 skipGitCheck: true,
-                captureCodemodOutput: false,
+                onBeforeCodemod: () => retrySpinner.stop(),
+                onAfterCodemod: () => retrySpinner.start('Installing plugin...'),
               });
             } catch (retryError) {
               retrySpinner.fail('Failed to install plugin.');
