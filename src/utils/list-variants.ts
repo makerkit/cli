@@ -53,6 +53,36 @@ export const VARIANT_CATALOG: VariantInfo[] = [
     auth: 'Supabase Auth',
     status: 'stable',
   },
+  {
+    id: 'tanstack-supabase',
+    name: 'TanStack Start + Supabase',
+    description: 'Full-stack SaaS kit with TanStack Start and Supabase',
+    repo: VARIANT_REPO_MAP['tanstack-supabase'],
+    tech: ['TanStack Start', 'Supabase', 'Tailwind CSS', 'shadcn/ui'],
+    database: 'PostgreSQL (Supabase)',
+    auth: 'Supabase Auth',
+    status: 'stable',
+  },
+  {
+    id: 'tanstack-drizzle',
+    name: 'TanStack Start + Drizzle',
+    description: 'Full-stack SaaS kit with TanStack Start and Drizzle ORM',
+    repo: VARIANT_REPO_MAP['tanstack-drizzle'],
+    tech: ['TanStack Start', 'Drizzle', 'Tailwind CSS', 'shadcn/ui'],
+    database: 'PostgreSQL',
+    auth: 'Better Auth',
+    status: 'stable',
+  },
+  {
+    id: 'tanstack-prisma',
+    name: 'TanStack Start + Prisma',
+    description: 'Full-stack SaaS kit with TanStack Start and Prisma ORM',
+    repo: VARIANT_REPO_MAP['tanstack-prisma'],
+    tech: ['TanStack Start', 'Prisma', 'Tailwind CSS', 'shadcn/ui'],
+    database: 'PostgreSQL',
+    auth: 'Better Auth',
+    status: 'stable',
+  },
 ];
 
 export interface ListVariantsResult {

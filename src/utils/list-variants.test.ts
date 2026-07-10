@@ -5,9 +5,9 @@ import { VARIANT_REPO_MAP } from '@/src/utils/upstream';
 import { listVariants, VARIANT_CATALOG } from './list-variants';
 
 describe('listVariants', () => {
-  it('returns all 4 variants', () => {
+  it('returns all 7 variants', () => {
     const result = listVariants();
-    expect(result.variants).toHaveLength(4);
+    expect(result.variants).toHaveLength(7);
   });
 
   it('wraps VARIANT_CATALOG in a variants key', () => {
@@ -25,6 +25,9 @@ describe('VARIANT_CATALOG', () => {
       'next-drizzle',
       'next-prisma',
       'react-router-supabase',
+      'tanstack-supabase',
+      'tanstack-drizzle',
+      'tanstack-prisma',
     ]);
   });
 

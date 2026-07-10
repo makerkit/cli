@@ -6,7 +6,10 @@ export type Variant =
   | 'next-supabase'
   | 'next-drizzle'
   | 'next-prisma'
-  | 'react-router-supabase';
+  | 'react-router-supabase'
+  | 'tanstack-supabase'
+  | 'tanstack-drizzle'
+  | 'tanstack-prisma';
 
 async function readDeps(
   pkgPath: string,
@@ -49,8 +52,26 @@ export async function detectVariant(): Promise<Variant> {
 
   const hasSupabase = !!webDeps['@supabase/supabase-js'];
   const hasReactRouter = !!webDeps['@react-router/node'];
+  const hasTanstack = !!webDeps['@tanstack/react-start'];
   const hasDrizzle = !!webDeps['drizzle-orm'] || !!dbDeps['drizzle-orm'];
   const hasPrisma = !!webDeps['@prisma/client'] || !!dbDeps['@prisma/client'];
+
+  // TanStack Start kits must be checked before the plain Next.js branches:
+  // the TanStack Supabase kit ships both @supabase/supabase-js and
+  // @tanstack/react-start, so a naive hasSupabase check would misclassify it.
+  if (hasTanstack) {
+    if (hasSupabase) {
+      return 'tanstack-supabase';
+    }
+
+    if (hasDrizzle) {
+      return 'tanstack-drizzle';
+    }
+
+    if (hasPrisma) {
+      return 'tanstack-prisma';
+    }
+  }
 
   if (hasReactRouter && hasSupabase) {
     return 'react-router-supabase';

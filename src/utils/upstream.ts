@@ -7,6 +7,9 @@ export const VARIANT_REPO_MAP: Record<Variant, string> = {
   'next-drizzle': 'makerkit/next-drizzle-saas-kit-turbo',
   'next-prisma': 'makerkit/next-prisma-saas-kit-turbo',
   'react-router-supabase': 'makerkit/react-router-supabase-saas-kit-turbo',
+  'tanstack-supabase': 'makerkit/tanstack-supabase-saas-kit-turbo',
+  'tanstack-drizzle': 'makerkit/tanstack-drizzle-saas-kit-turbo',
+  'tanstack-prisma': 'makerkit/tanstack-prisma-saas-kit-turbo',
 };
 
 function sshUrl(repo: string): string {

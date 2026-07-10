@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.9 - 2026-07-10
+
+- Add support for the new TanStack Start kits: `tanstack-supabase`, `tanstack-drizzle`, and `tanstack-prisma`
+- Detect TanStack Start kits via `@tanstack/react-start` (checked before the Next.js Supabase branch so the TanStack Supabase kit isn't misclassified)
+- Register upstream repos and project-creation catalog entries for all three TanStack variants
+
 ## 2.0.8 - 2026-03-25
 
 - Switch codemod runner to native `spawn` with idle timeout to work around codemod CLI hang bug
