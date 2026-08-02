@@ -10,6 +10,14 @@ export const MOCK_PLUGIN: PluginDefinition = {
   postInstallMessage: 'Run migrations',
 };
 
+export const MOCK_SELF_DISTRIBUTING_PLUGIN: PluginDefinition = {
+  id: 'expo',
+  name: 'Expo Mobile App',
+  description: 'Add an Expo mobile app',
+  selfDistributing: true,
+  variants: { 'next-supabase': { envVars: [], path: 'packages/mobile-ui' } },
+};
+
 export const MOCK_PLUGIN_WITH_ENV: PluginDefinition = {
   id: 'posthog',
   name: 'PostHog',

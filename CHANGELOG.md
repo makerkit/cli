@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.0 - 2026-08-01
+
+- Add the Expo Mobile App plugin (`expo`) for `next-supabase`, which installs the Expo app, the `@kit/mobile-ui` package and the `/api/v1` mobile API
+- Add a `selfDistributing` flag for plugins that bring their own files: installing them skips the registry download and the base-version snapshot, and runs the codemod alone. The file registry stores content as strings, so it cannot carry binary assets
+- Exclude self-distributing plugins from `plugins outdated`, and return an explanatory reason from `plugins update`/`apply` instead of failing on a missing registry entry
+- Add `paths` to the plugin variant config for plugins that span more than one directory. A plugin now counts as installed only when all of its directories are present, so a partially removed one can be reinstalled rather than being mistaken for a complete install
+
 ## 2.0.9 - 2026-07-10
 
 - Add support for the new TanStack Start kits: `tanstack-supabase`, `tanstack-drizzle`, and `tanstack-prisma`

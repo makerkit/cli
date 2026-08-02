@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/src/plugins-model', () => ({
   PluginRegistry: { load: vi.fn() },
+  isTrackable: vi.fn(),
 }));
 
 vi.mock('@/src/utils/workspace', () => ({
@@ -34,11 +35,14 @@ vi.mock('execa', () => ({
   execaCommand: vi.fn(),
 }));
 
-import { PluginRegistry } from '@/src/plugins-model';
+import { PluginRegistry, isTrackable } from '@/src/plugins-model';
 import { applyPluginUpdate } from '@/src/utils/apply-plugin-update';
 import { saveBaseVersions } from '@/src/utils/base-store';
 import { fetchRegistryItem } from '@/src/utils/install-registry-files';
-import { mocks } from '@/src/utils/test-helpers';
+import {
+  MOCK_SELF_DISTRIBUTING_PLUGIN,
+  mocks,
+} from '@/src/utils/test-helpers';
 import { getCachedUsername } from '@/src/utils/username-cache';
 import { validateProject } from '@/src/utils/workspace';
 import { execaCommand } from 'execa';
@@ -47,6 +51,33 @@ import fs from 'fs-extra';
 describe('applyPluginUpdate', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Registry-backed is the norm; the self-distributing case opts out below.
+    vi.mocked(isTrackable).mockReturnValue(true);
+  });
+
+  it('returns failure for a self-distributing plugin', async () => {
+    mocks.mockValidProject(validateProject);
+    mocks.mockUsername(getCachedUsername, 'user');
+    mocks.mockPluginRegistry(PluginRegistry.load, {
+      validatePlugin: MOCK_SELF_DISTRIBUTING_PLUGIN,
+    });
+    vi.mocked(isTrackable).mockReturnValue(false);
+
+    const result = await applyPluginUpdate({
+      projectPath: '/fake',
+      pluginId: 'expo',
+      files: [],
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.reason).toContain('not tracked by the registry');
+    }
+
+    expect(fetchRegistryItem).not.toHaveBeenCalled();
+    expect(saveBaseVersions).not.toHaveBeenCalled();
   });
 
   function setupCommon(deps?: Record<string, string>) {
