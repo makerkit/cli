@@ -74,11 +74,25 @@ export async function addPlugin(
     };
   }
 
-  const item = await installRegistryFiles(variant, options.pluginId, username, majorVersion);
-  await saveBaseVersions(options.pluginId, item.files);
+  // A self-distributing plugin has no registry entry — its codemod brings the
+  // files. Downloading first would throw before the codemod ever ran.
+  let codemodVersion: string | undefined;
+
+  if (!plugin.selfDistributing) {
+    const item = await installRegistryFiles(
+      variant,
+      options.pluginId,
+      username,
+      majorVersion,
+    );
+
+    await saveBaseVersions(options.pluginId, item.files);
+
+    codemodVersion = item.codemodVersion;
+  }
 
   options.onBeforeCodemod?.();
-  const codemodResult = await runCodemod(variant, options.pluginId, item.codemodVersion);
+  const codemodResult = await runCodemod(variant, options.pluginId, codemodVersion);
   options.onAfterCodemod?.();
 
   const envVars = getEnvVars(plugin, variant);

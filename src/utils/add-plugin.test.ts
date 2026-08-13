@@ -42,7 +42,11 @@ import { appendEnvVars } from '@/src/utils/env-vars';
 import { isGitClean } from '@/src/utils/git';
 import { installRegistryFiles } from '@/src/utils/install-registry-files';
 import { runCodemod } from '@/src/utils/run-codemod';
-import { MOCK_PLUGIN, mocks } from '@/src/utils/test-helpers';
+import {
+  MOCK_PLUGIN,
+  MOCK_SELF_DISTRIBUTING_PLUGIN,
+  mocks,
+} from '@/src/utils/test-helpers';
 import { cacheUsername, getCachedUsername } from '@/src/utils/username-cache';
 import { validateProject } from '@/src/utils/workspace';
 
@@ -141,6 +145,28 @@ describe('addPlugin', () => {
 
     expect(cacheUsername).toHaveBeenCalledWith('newuser');
     expect(saveBaseVersions).toHaveBeenCalled();
+  });
+
+  it('skips the registry download for a self-distributing plugin', async () => {
+    mocks.mockGitClean(isGitClean, true);
+    mocks.mockValidProject(validateProject);
+    mocks.mockUsername(getCachedUsername, 'user');
+    mocks.mockPluginRegistry(PluginRegistry.load, {
+      validatePlugin: MOCK_SELF_DISTRIBUTING_PLUGIN,
+    });
+    vi.mocked(isInstalled).mockResolvedValue(false);
+    vi.mocked(runCodemod).mockResolvedValue({ success: true, output: 'done' });
+    vi.mocked(getEnvVars).mockReturnValue([]);
+
+    const result = await addPlugin({ projectPath: '/fake', pluginId: 'expo' });
+
+    expect(result.success).toBe(true);
+
+    // The registry has no entry for it — fetching would throw before the
+    // codemod, which is the step that actually installs the plugin.
+    expect(installRegistryFiles).not.toHaveBeenCalled();
+    expect(saveBaseVersions).not.toHaveBeenCalled();
+    expect(runCodemod).toHaveBeenCalledWith('next-supabase', 'expo', undefined);
   });
 
   it('skips git check when skipGitCheck is true', async () => {

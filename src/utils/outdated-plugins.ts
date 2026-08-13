@@ -7,6 +7,7 @@ import {
   type PluginDefinition,
   getPath,
   isInstalled,
+  isTrackable,
 } from '@/src/plugins-model';
 import { fetchRegistryItem } from '@/src/utils/install-registry-files';
 import {
@@ -81,7 +82,9 @@ export async function outdatedPlugins(
   const installed: PluginDefinition[] = [];
 
   for (const p of plugins) {
-    if (await isInstalled(p, variant)) {
+    // Self-distributing plugins have nothing in the registry to compare
+    // against, so they can never be reported as outdated.
+    if (isTrackable(p) && (await isInstalled(p, variant))) {
       installed.push(p);
     }
   }

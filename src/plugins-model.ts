@@ -14,7 +14,22 @@ export interface EnvVar {
 
 export interface VariantConfig {
   envVars: EnvVar[];
+  /**
+   * The plugin's own package, used to detect whether it is installed. Must be
+   * a library package — a directory with a `package.json` declaring both
+   * `name` and `exports`.
+   */
   path?: string;
+  /**
+   * Every directory the plugin owns, when it spans more than `path`. Apps and
+   * route trees belong here: they are part of the plugin but are not library
+   * packages, so they cannot serve as `path`.
+   *
+   * All of them have to be present for the plugin to count as installed, so a
+   * partially removed plugin can be reinstalled rather than being mistaken for
+   * a complete one.
+   */
+  paths?: string[];
 }
 
 export interface PluginDefinition {
@@ -23,6 +38,17 @@ export interface PluginDefinition {
   description: string;
   variants: Partial<Record<Variant, VariantConfig>>;
   postInstallMessage?: string;
+  /**
+   * The plugin brings its own files rather than receiving them from the file
+   * registry, so installing it is the codemod alone.
+   *
+   * The registry stores each file's content as a string, which rules it out
+   * for anything shipping binary assets, and it is a poor fit for a plugin the
+   * size of a whole second app. Such a plugin fetches its own sources, and the
+   * CLI skips both the registry download and the base-version snapshot that
+   * the update machinery is built on — see `isTrackable`.
+   */
+  selfDistributing?: boolean;
 }
 
 const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
@@ -391,7 +417,34 @@ const DEFAULT_PLUGINS: Record<string, PluginDefinition> = {
         path: 'packages/plugins/directus',
       },
     },
-  }
+  },
+  expo: {
+    name: 'Expo Mobile App',
+    id: 'expo',
+    description: 'Add an Expo mobile app that shares code with your web app.',
+    // The codemod fetches apps/native, packages/mobile-ui and the /api/v1
+    // routes itself — the registry cannot carry the app's binary assets.
+    selfDistributing: true,
+    postInstallMessage:
+      'Set EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_PUBLIC_KEY and EXPO_PUBLIC_API_BASE_URL in apps/native/.env.development, then run: pnpm run start:native',
+    variants: {
+      'next-supabase': {
+        // EXPO_PUBLIC_* vars belong in apps/native/.env.development, which
+        // ships with working local defaults. Declaring them here would append
+        // them to the web app's .env files instead.
+        envVars: [],
+        // The Expo app itself cannot be the detection path: `isInstalled`
+        // needs a package.json with `name` and `exports`, and apps/native has
+        // no `exports` — it is an app, not a library.
+        path: 'packages/mobile-ui',
+        paths: [
+          'packages/mobile-ui',
+          'apps/native',
+          'apps/web/app/api/v1',
+        ],
+      },
+    },
+  },
 };
 
 export class PluginRegistry {
@@ -442,6 +495,33 @@ export function getPath(
   return plugin.variants[variant]?.path;
 }
 
+/**
+ * Every directory the plugin owns. Falls back to the single `path` for the
+ * plugins that are one package, which is most of them.
+ */
+export function getPaths(
+  plugin: PluginDefinition,
+  variant: Variant,
+): string[] {
+  const config = plugin.variants[variant];
+
+  if (config?.paths?.length) {
+    return config.paths;
+  }
+
+  return config?.path ? [config.path] : [];
+}
+
+/**
+ * Whether the plugin's files can be compared against the registry, which is
+ * what every update path here is built on. Self-distributing plugins have no
+ * registry entry to diff against, so they are reported as up to date rather
+ * than blowing up on a 404 halfway through `makerkit plugins outdated`.
+ */
+export function isTrackable(plugin: PluginDefinition): boolean {
+  return !plugin.selfDistributing;
+}
+
 export async function isInstalled(
   plugin: PluginDefinition,
   variant: Variant,
@@ -461,8 +541,26 @@ export async function isInstalled(
   try {
     const pkg = await fs.readJson(pkgJsonPath);
 
-    return !!pkg.name && !!pkg.exports;
+    if (!pkg.name || !pkg.exports) {
+      return false;
+    }
   } catch {
     return false;
   }
+
+  // A plugin spanning several directories is only installed when all of them
+  // are there. Without this, deleting the app half of a multi-directory plugin
+  // would still read as installed, and `plugins add` would refuse to repair it.
+  for (const ownedPath of getPaths(plugin, variant)) {
+    // Already proven present by its package.json above.
+    if (ownedPath === pluginPath) {
+      continue;
+    }
+
+    if (!(await fs.pathExists(join(process.cwd(), ownedPath)))) {
+      return false;
+    }
+  }
+
+  return true;
 }

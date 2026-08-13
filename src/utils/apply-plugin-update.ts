@@ -2,7 +2,7 @@ import { dirname, join } from 'path';
 
 import fs from 'fs-extra';
 
-import { PluginRegistry } from '@/src/plugins-model';
+import { PluginRegistry, isTrackable } from '@/src/plugins-model';
 import { saveBaseVersions } from '@/src/utils/base-store';
 import { fetchRegistryItem } from '@/src/utils/install-registry-files';
 import {
@@ -52,7 +52,14 @@ export async function applyPluginUpdate(
   cacheUsername(username);
 
   const registry = await PluginRegistry.load();
-  registry.validatePlugin(options.pluginId, variant);
+  const plugin = registry.validatePlugin(options.pluginId, variant);
+
+  if (!isTrackable(plugin)) {
+    return {
+      success: false,
+      reason: `Plugin "${plugin.name}" ships its own files and is not tracked by the registry, so there is nothing to apply. Re-run its codemod to pull a newer version.`,
+    };
+  }
 
   const item = await fetchRegistryItem(variant, options.pluginId, username, majorVersion);
   const remoteByPath = new Map(item.files.map((f) => [f.target, f.content]));

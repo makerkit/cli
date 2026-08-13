@@ -2,7 +2,7 @@ import { join } from 'path';
 
 import fs from 'fs-extra';
 
-import { PluginRegistry } from '@/src/plugins-model';
+import { PluginRegistry, isTrackable } from '@/src/plugins-model';
 import {
   computeFileStatus,
   hasBaseVersions,
@@ -56,7 +56,14 @@ export async function checkPluginUpdate(
   cacheUsername(username);
 
   const registry = await PluginRegistry.load();
-  registry.validatePlugin(options.pluginId, variant);
+  const plugin = registry.validatePlugin(options.pluginId, variant);
+
+  if (!isTrackable(plugin)) {
+    return {
+      success: false,
+      reason: `Plugin "${plugin.name}" ships its own files and is not tracked by the registry, so it cannot be diffed for updates. Re-run its codemod to pull a newer version.`,
+    };
+  }
 
   const item = await fetchRegistryItem(variant, options.pluginId, username, majorVersion);
   const cwd = process.cwd();
