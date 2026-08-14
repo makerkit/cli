@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1 - 2026-08-13
+
+- Fix codemods being killed mid-run: the idle guard fired after 3s without output, which is shorter than a git clone, a `pnpm install` or a typecheck. Raised to 3 minutes, and the overall timeout to 15
+- Fix a killed codemod being reported as a success. A `null` exit code means a signal ended the process, and treating it as success printed an install summary over a half-applied repo. It is now a failure that says so, and points at `git status`
+
 ## 2.1.0 - 2026-08-01
 
 - Add the Expo Mobile App plugin (`expo`) for `next-supabase`, which installs the Expo app, the `@kit/mobile-ui` package and the `/api/v1` mobile API

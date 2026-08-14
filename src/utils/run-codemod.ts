@@ -1,7 +1,18 @@
 import { spawn } from 'node:child_process';
 
-const CODEMOD_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-const IDLE_KILL_MS = 3_000;
+const CODEMOD_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+
+/**
+ * Guards against a codemod CLI hang, not against slow work.
+ *
+ * This was 3s, which is shorter than plenty of legitimate steps — a git clone,
+ * a `pnpm install`, a typecheck. Worse, killing our child does not stop its
+ * descendants: the plugin that tripped this had its files fetched by an
+ * orphaned `git` while the workflow itself was already dead, leaving a
+ * half-installed repo and no error. Keep the hang protection, but well above
+ * the quiet stretches real steps have.
+ */
+const IDLE_KILL_MS = 3 * 60 * 1000; // 3 minutes
 
 export async function runCodemod(
   variant: string,
@@ -57,12 +68,30 @@ export async function runCodemod(
           });
         }, CODEMOD_TIMEOUT_MS);
 
-        child.on('exit', (code) => {
+        child.on('exit', (code, signal) => {
           clearTimeout(globalTimer);
           if (idleTimer) clearTimeout(idleTimer);
+
+          if (code === 0) {
+            return resolve({ success: true, output: '' });
+          }
+
+          // A null code means a signal ended it — the idle guard above, or the
+          // user interrupting. Reporting that as success is how a half-applied
+          // codemod used to pass silently, leaving the caller to print a
+          // success summary over a broken repo.
+          if (code === null) {
+            return resolve({
+              success: false,
+              output: signal
+                ? `Codemod was terminated by ${signal} before it finished. It may have applied some changes but not others — check "git status" before re-running.`
+                : 'Codemod exited without a status code before it finished.',
+            });
+          }
+
           resolve({
-            success: code === 0 || code === null,
-            output: code === 0 || code === null ? '' : `Command failed with exit code ${code}`,
+            success: false,
+            output: `Command failed with exit code ${code}`,
           });
         });
 
